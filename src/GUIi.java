@@ -3,7 +3,7 @@ import java.awt.*;
 import java.io.IOException;
 
 
-public class GUI extends JFrame {
+public class GUIi extends JFrame {
     // Name-constants for the game properties
     public static final int GRID_SIZE = 9;    // Size of the board
     public static final int SUBGRID_SIZE = 3; // Size of the sub-grid
@@ -44,12 +44,34 @@ public class GUI extends JFrame {
                     {false, false, false, false, false, false, false, false, false},
                     {false, false, false, false, false, false, false, false, false}};
 
+
     /**
      * Constructor to setup the game and the UI Components
      */
-    public GUI() throws IOException {
-        Container cp = getContentPane();
-        cp.setLayout(new GridLayout(GRID_SIZE, GRID_SIZE));
+    public GUIi() throws IOException {
+        int jogoIndex = obterJogo.escolherJogoIndexAleatoriamente();
+
+
+        //Container cp = getContentPane();
+        //cp.setLayout(new GridLayout(GRID_SIZE, GRID_SIZE));
+
+        JFrame janela = new JFrame();
+        janela.setLayout(new BorderLayout());
+
+        JPanel panelTopo = new JPanel(new FlowLayout());
+        janela.add(panelTopo, BorderLayout.NORTH);
+
+        JButton button1 = new JButton("Button 1"),
+                button2 = new JButton("Button 2"),
+                button3 = new JButton("Button 3"),
+                button4 = new JButton("Button 4");
+        panelTopo.add(button1);
+        panelTopo.add(button2);
+        panelTopo.add(button3);
+        panelTopo.add(button4);
+
+        JPanel panelSudoku = new JPanel(new GridLayout(9, 9, 1, 1));
+        janela.add(panelSudoku, BorderLayout.CENTER);
 
         // Allocate a common listener as the ActionEvent listener for all the
         //  JTextFields
@@ -58,7 +80,7 @@ public class GUI extends JFrame {
         for (int line = 0; line < GRID_SIZE; ++line) {
             for (int col = 0; col < GRID_SIZE; ++col) {
                 cels[line][col] = new JTextField(); // Allocate element of array
-                cp.add(cels[line][col]);            // ContentPane adds JTextField
+                panelSudoku.add(cels[line][col]);            // ContentPane adds JTextField
 /*                if (masks[line][col]) {
                     cels[line][col].setText("");     // set to empty string
                     cels[line][col].setEditable(true);
@@ -72,32 +94,46 @@ public class GUI extends JFrame {
                     cels[line][col].setBackground(CLOSED_CELL_BGCOLOR);
                     cels[line][col].setForeground(CLOSED_CELL_TEXT);
                 }*/
-                //-----
-                String[] temp = obterJogo.deLinhaPara9x9(obterJogo.JogoOUSolucao(1,0));
+
+
+                //--------------
+                String[] temp = obterJogo.deLinhaPara9x9(obterJogo.JogoOUSolucao(jogoIndex,0));
                 //for (int s = 0; s < 9; s++) {
                 //    for (int ss = 0; ss < 9; ss++) {
-                cels[line][col].setText(String.valueOf(temp[line].charAt(col)));
+
+                if (String.valueOf(temp[line].charAt(col)).equals(".")) {
+                    cels[line][col].setEditable(true);
+                    cels[line][col].setBackground(OPEN_CELL_BGCOLOR);
+                } else {
+                    cels[line][col].setText(String.valueOf(temp[line].charAt(col)));
+                    cels[line][col].setEditable(false);
+                    cels[line][col].setBackground(CLOSED_CELL_BGCOLOR);
+                    cels[line][col].setForeground(CLOSED_CELL_TEXT);
+                }
                 //    }
                 //}
-                //------
+                //-----------------
+
+
                 // Beautify all the cells
                 cels[line][col].setHorizontalAlignment(JTextField.CENTER);
                 cels[line][col].setFont(FONT_NUMBERS);
             }
         }
+        obterJogo.imprimirSolucaoConsola(jogoIndex);
 
         // Set the size of the content-pane and pack all the components
         //  under this container.
-        cp.setPreferredSize(new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT));
-        pack();
+        panelSudoku.setPreferredSize(new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT));
+        janela.pack();
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // Handle window closing
-        setTitle("Sudoku");
-        setVisible(true);
+        janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // Handle window closing
+        janela.setTitle("Sudoku");
+        janela.setVisible(true);
     }
 
     public static void main(String[] args) throws IOException {
         // [TODO 3] (Now)
-        new GUI();
+        new GUIi();
     }
 }
