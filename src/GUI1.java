@@ -70,7 +70,7 @@ public class GUI1 extends JFrame {
 
                         regions[x][y].add(tfields[a][b]);
                         //-----
-                        String[] temp = obterJogo.deLinhaPara9x9(obterJogo.JogoOUSolucao(1,0));
+                        String[] temp = obterJogo.deLinhaPara9x9(obterJogo.PuzzleOUSolucao(1,0));
                         //for (int s = 0; s < 9; s++) {
                         //    for (int ss = 0; ss < 9; ss++) {
                         tfields[a][b].setText(String.valueOf(temp[a].charAt(b)));

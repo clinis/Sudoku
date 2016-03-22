@@ -51,10 +51,6 @@ public class GUIi extends JFrame {
     public GUIi() throws IOException {
         int jogoIndex = obterJogo.escolherJogoIndexAleatoriamente();
 
-
-        //Container cp = getContentPane();
-        //cp.setLayout(new GridLayout(GRID_SIZE, GRID_SIZE));
-
         JFrame janela = new JFrame();
         janela.setLayout(new BorderLayout());
 
@@ -70,8 +66,19 @@ public class GUIi extends JFrame {
         panelTopo.add(button3);
         panelTopo.add(button4);
 
-        JPanel panelSudoku = new JPanel(new GridLayout(9, 9, 1, 1));
+        JPanel panelSudoku = new JPanel(new GridLayout(3, 3, 1, 1));
         janela.add(panelSudoku, BorderLayout.CENTER);
+
+        JPanel[][] regions = new JPanel[3][3];
+        for ( int i = 0; i < 3; i++){
+            for ( int j=0; j < 3; j++){
+                regions[i][j] = new JPanel(new GridLayout(3, 3));
+                regions[i][j].setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+                panelSudoku.add(regions[i][j]);
+            }
+        }
+
+        String[] jogoPuzzle = obterJogo.deLinhaPara9x9(obterJogo.PuzzleOUSolucao(jogoIndex,0));
 
         // Allocate a common listener as the ActionEvent listener for all the
         //  JTextFields
@@ -80,47 +87,42 @@ public class GUIi extends JFrame {
         for (int line = 0; line < GRID_SIZE; ++line) {
             for (int col = 0; col < GRID_SIZE; ++col) {
                 cels[line][col] = new JTextField(); // Allocate element of array
-                panelSudoku.add(cels[line][col]);            // ContentPane adds JTextField
-/*                if (masks[line][col]) {
-                    cels[line][col].setText("");     // set to empty string
+                //panelSudoku.add(cels[line][col]);   // ContentPane adds JTextField        // comentado pq regioes
+
+                if (String.valueOf(jogoPuzzle[line].charAt(col)).equals(".")) {
                     cels[line][col].setEditable(true);
                     cels[line][col].setBackground(OPEN_CELL_BGCOLOR);
 
                     // Add ActionEvent listener to process the input
                     // ... [TODO 2] (Later) ...
+
                 } else {
-                    cels[line][col].setText(puzzle[line][col] + "");
-                    cels[line][col].setEditable(false);
-                    cels[line][col].setBackground(CLOSED_CELL_BGCOLOR);
-                    cels[line][col].setForeground(CLOSED_CELL_TEXT);
-                }*/
-
-
-                //--------------
-                String[] temp = obterJogo.deLinhaPara9x9(obterJogo.JogoOUSolucao(jogoIndex,0));
-                //for (int s = 0; s < 9; s++) {
-                //    for (int ss = 0; ss < 9; ss++) {
-
-                if (String.valueOf(temp[line].charAt(col)).equals(".")) {
-                    cels[line][col].setEditable(true);
-                    cels[line][col].setBackground(OPEN_CELL_BGCOLOR);
-                } else {
-                    cels[line][col].setText(String.valueOf(temp[line].charAt(col)));
+                    cels[line][col].setText(String.valueOf(jogoPuzzle[line].charAt(col)));
                     cels[line][col].setEditable(false);
                     cels[line][col].setBackground(CLOSED_CELL_BGCOLOR);
                     cels[line][col].setForeground(CLOSED_CELL_TEXT);
                 }
-                //    }
-                //}
-                //-----------------
+                regions[line/3][col/3].add(cels[line][col]);
 
-
+/*                if ( (line / 3) * 3 + col / 3 == 0 ){
+                    //cels[line][col].setBackground(Color.green);
+                    regions[0][0].add(cels[line][col]);
+                }
+                else if ( (line / 3) * 3 + col / 3 == 1 ) {
+                    //cels[line][col].setBackground(Color.black);
+                    regions[0][1].add(cels[line][col]);
+                }
+                else if ( (line / 3) * 3 + col / 3 == 2 ){
+                    //cels[line][col].setBackground(Color.blue);
+                    regions[0][2].add(cels[line][col]);
+                }
+*/
                 // Beautify all the cells
                 cels[line][col].setHorizontalAlignment(JTextField.CENTER);
                 cels[line][col].setFont(FONT_NUMBERS);
             }
         }
-        obterJogo.imprimirSolucaoConsola(jogoIndex);
+        obterJogo.imprimirSolucao(jogoIndex);
 
         // Set the size of the content-pane and pack all the components
         //  under this container.

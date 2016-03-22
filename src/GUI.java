@@ -73,7 +73,7 @@ public class GUI extends JFrame {
                     cels[line][col].setForeground(CLOSED_CELL_TEXT);
                 }*/
                 //-----
-                String[] temp = obterJogo.deLinhaPara9x9(obterJogo.JogoOUSolucao(1,0));
+                String[] temp = obterJogo.deLinhaPara9x9(obterJogo.PuzzleOUSolucao(1,0));
                 //for (int s = 0; s < 9; s++) {
                 //    for (int ss = 0; ss < 9; ss++) {
                 cels[line][col].setText(String.valueOf(temp[line].charAt(col)));

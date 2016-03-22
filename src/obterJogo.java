@@ -28,7 +28,7 @@ public class obterJogo {
     }
 
     //// retorna em String o puzzle ou a solução (queCoisa=0 ou queCoisa=1) do jogo indexJogo
-    public static String JogoOUSolucao(int indexJogo, int queCoisa) throws IOException {
+    public static String PuzzleOUSolucao(int indexJogo, int queCoisa) throws IOException {
         String[] coisa = qualJogo(indexJogo).split(cvsSplitBy);
         return coisa[queCoisa];
     }
@@ -42,8 +42,8 @@ public class obterJogo {
         return splitLine;
     }
 
-    public static void imprimirSolucaoConsola(int indexJogo) throws IOException {
-        String[] tem = deLinhaPara9x9(JogoOUSolucao(indexJogo,1));
+    public static void imprimirSolucao(int indexJogo) throws IOException {
+        String[] tem = deLinhaPara9x9(PuzzleOUSolucao(indexJogo,1));
         for (int i = 0; i < 9; i++) {
             System.out.println(tem[i]);
         }
@@ -58,16 +58,16 @@ public class obterJogo {
     }
 
     public static void main(String args[]) throws IOException {
-        //System.out.println(JogoOUSolucao(0,1));
+        //System.out.println(PuzzleOUSolucao(0,1));
         //System.out.println(qualJogo(1));
 
         int asw = escolherJogoIndexAleatoriamente();
         {
-            String[] tem = deLinhaPara9x9(JogoOUSolucao(asw,0));
+            String[] tem = deLinhaPara9x9(PuzzleOUSolucao(asw,0));
             for (int i = 0; i < 9; i++) {
                 System.out.println(tem[i]);
             }
         }
-        imprimirSolucaoConsola(asw);
+        imprimirSolucao(asw);
     }
 }
