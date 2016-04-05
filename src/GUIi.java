@@ -22,28 +22,6 @@ public class GUIi extends JFrame {
 
     private JTextField[][] cels = new JTextField[GRID_SIZE][GRID_SIZE];
 
-    private int[][] puzzle =
-            {{5, 3, 4, 6, 7, 8, 9, 1, 2},
-                    {6, 7, 2, 1, 9, 5, 3, 4, 8},
-                    {1, 9, 8, 3, 4, 2, 5, 6, 7},
-                    {8, 5, 9, 7, 6, 1, 4, 2, 3},
-                    {4, 2, 6, 8, 5, 3, 7, 9, 1},
-                    {7, 1, 3, 9, 2, 4, 8, 5, 6},
-                    {9, 6, 1, 5, 3, 7, 2, 8, 4},
-                    {2, 8, 7, 4, 1, 9, 6, 3, 5},
-                    {3, 4, 5, 2, 8, 6, 1, 7, 9}};
-
-    private boolean[][] masks =
-            {{false, false, false, false, false, true, false, false, false},
-                    {false, false, false, false, false, false, false, false, true},
-                    {false, false, false, false, false, false, false, false, false},
-                    {false, false, false, false, false, false, false, false, false},
-                    {false, false, false, false, false, false, false, false, false},
-                    {false, false, false, false, false, false, false, false, false},
-                    {false, false, false, false, false, false, false, false, false},
-                    {false, false, false, false, false, false, false, false, false},
-                    {false, false, false, false, false, false, false, false, false}};
-
 
     /**
      * Constructor to setup the game and the UI Components
@@ -129,7 +107,7 @@ public class GUIi extends JFrame {
         panelSudoku.setPreferredSize(new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT));
         janela.pack();
 
-        janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // Handle window closing
+        janela.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);  //janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         janela.setTitle("Sudoku");
         janela.setVisible(true);
     }
