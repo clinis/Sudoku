@@ -59,8 +59,8 @@ public class GUIi extends JFrame {
         String[] jogoPuzzle = obterJogo.deLinhaPara9x9(obterJogo.PuzzleOUSolucao(jogoIndex,0));
 
         // Allocate a common listener as the ActionEvent listener for all the
-        //  JTextFields
-        // ... [TODO 1] (Later) ....
+        // JTextFields
+        // [TODO 1]
 
         for (int line = 0; line < GRID_SIZE; ++line) {
             for (int col = 0; col < GRID_SIZE; ++col) {
@@ -72,7 +72,7 @@ public class GUIi extends JFrame {
                     cels[line][col].setBackground(OPEN_CELL_BGCOLOR);
 
                     // Add ActionEvent listener to process the input
-                    // ... [TODO 2] (Later) ...
+                    // [TODO 2]
 
                 } else {
                     cels[line][col].setText(String.valueOf(jogoPuzzle[line].charAt(col)));
@@ -112,7 +112,7 @@ public class GUIi extends JFrame {
     }
 
     public static void main(String[] args) throws IOException {
-        // [TODO 3] (Now)
+        // [TODO 3]
         new GUIi();
     }
 }
