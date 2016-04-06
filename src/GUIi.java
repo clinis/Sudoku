@@ -102,8 +102,7 @@ public class GUIi extends JFrame {
         }
         obterJogo.imprimirSolucao(jogoIndex);
 
-        // Set the size of the content-pane and pack all the components
-        //  under this container.
+        // Set the size of the content-pane and pack all the components under this container.
         panelSudoku.setPreferredSize(new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT));
         janela.pack();
 
