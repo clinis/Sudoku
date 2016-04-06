@@ -6,7 +6,7 @@ import java.util.List;
 
 public class obterJogo {
     private static final String cvsSplitBy = ",";
-    private static final String csvFile = "/Users/dinis/btest.csv";
+    private static final String csvFile = "./res/btest.csv";
 
     //// lê do ficheiro fileName, retorna array com cada linha
     private static String[] readLines(String fileName) throws IOException {
