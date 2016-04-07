@@ -1,3 +1,5 @@
+package x;
+
 import java.applet.*;
 import java.io.IOException;
 
