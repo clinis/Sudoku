@@ -2,24 +2,19 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class Cells extends JPanel{
-
-    public int regionro = -1;
-    public int i;
+public class Cells extends JPanel {
+    public boolean edita=true;
     public JTextArea b;
 
-    Cells(int a){
+    Cells(int a) {
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        setVisible(true);
 
-        b = new JTextArea(Integer.toString(a));
+        setVisible(true);
+        setLayout(new BorderLayout());
+        b=new JTextArea(Integer.toString(a));
         b.setEditable(false);
-        b.addMouseListener(new MouseAdapter(){
-            public void mouseClicked(MouseEvent e){
-                regionro = a;
-                System.out.println(regionro);
-            }
-        });
+        b.setFont(new Font("Verdana", Font.BOLD, 40));
+
         b.getInputMap().put(KeyStroke.getKeyStroke("1"), "um");
         b.getInputMap().put(KeyStroke.getKeyStroke("2"), "dois");
         b.getInputMap().put(KeyStroke.getKeyStroke("3"), "tres");
@@ -29,38 +24,73 @@ public class Cells extends JPanel{
         b.getInputMap().put(KeyStroke.getKeyStroke("7"), "sete");
         b.getInputMap().put(KeyStroke.getKeyStroke("8"), "oito");
         b.getInputMap().put(KeyStroke.getKeyStroke("9"), "nove");
-        b.addKeyListener(new KeyAdapter(){
-            public void keyPressed(KeyEvent e){
-                if(KeyEvent.getKeyText(e.getKeyCode()).equals("1")){
-                    b.setText("1");
+        b.getInputMap().put(KeyStroke.getKeyStroke("⌫"), "delete");
+
+        b.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if(KeyEvent.getKeyText(e.getKeyCode()).equals("1")) {
+                    if(edita==true) {
+                        b.setText("1");
+                        b.setBackground(Color.WHITE);
+                    }
                 }
-                if(KeyEvent.getKeyText(e.getKeyCode()).equals("2")){
-                    b.setText("2");
+                if(KeyEvent.getKeyText(e.getKeyCode()).equals("2")) {
+                    if(edita==true) {
+                        b.setText("2");
+                        b.setBackground(Color.WHITE);
+                    }
                 }
-                if(KeyEvent.getKeyText(e.getKeyCode()).equals("3")){
-                    b.setText("3");
+                if(KeyEvent.getKeyText(e.getKeyCode()).equals("3")) {
+                    if(edita==true) {
+                        b.setText("3");
+                        b.setBackground(Color.WHITE);
+                    }
                 }
-                if(KeyEvent.getKeyText(e.getKeyCode()).equals("4")){
-                    b.setText("4");
+                if(KeyEvent.getKeyText(e.getKeyCode()).equals("4")) {
+                    if(edita==true) {
+                        b.setText("4");
+                        b.setBackground(Color.WHITE);
+                    }
                 }
-                if(KeyEvent.getKeyText(e.getKeyCode()).equals("5")){
-                    b.setText("5");
+                if(KeyEvent.getKeyText(e.getKeyCode()).equals("5")) {
+                    if(edita==true) {
+                        b.setText("5");
+                        b.setBackground(Color.WHITE);
+                    }
                 }
-                if(KeyEvent.getKeyText(e.getKeyCode()).equals("6")){
-                    b.setText("6");
+                if(KeyEvent.getKeyText(e.getKeyCode()).equals("6")) {
+                    if(edita==true) {
+                        b.setText("6");
+                        b.setBackground(Color.WHITE);
+                    }
                 }
-                if(KeyEvent.getKeyText(e.getKeyCode()).equals("7")){
-                    b.setText("7");
+                if(KeyEvent.getKeyText(e.getKeyCode()).equals("7")) {
+                    if(edita==true) {
+                        b.setText("7");
+                        b.setBackground(Color.WHITE);
+                    }
                 }
-                if(KeyEvent.getKeyText(e.getKeyCode()).equals("8")){
-                    b.setText("8");
+                if(KeyEvent.getKeyText(e.getKeyCode()).equals("8")) {
+                    if(edita==true) {
+                        b.setText("8");
+                        b.setBackground(Color.WHITE);
+                    }
                 }
-                if(KeyEvent.getKeyText(e.getKeyCode()).equals("9")){
-                    b.setText("9");
+                if(KeyEvent.getKeyText(e.getKeyCode()).equals("9")) {
+                    if(edita==true) {
+                        b.setText("9");
+                        b.setBackground(Color.WHITE);
+                    }
+                }
+                if(KeyEvent.getKeyText(e.getKeyCode()).equals("⌫")) {
+                    if(edita==true) {
+                        b.setText("  ");
+                        b.setBackground(Color.WHITE);
+                    }
                 }
             }
         });
         b.requestFocus();
-        add(b);
+        add(b,BorderLayout.CENTER);
     }
 }
