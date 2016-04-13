@@ -33,7 +33,7 @@ public class Sudoku extends JFrame {
         for(int line = 0; line < 9; line++) {
             for(int col = 0; col < 9; col++) {
                 if(String.valueOf(jogoPuzzle[line].charAt(col)).equals(".")) {
-                    cels.get(col+line*9).b.setText("   ");
+                    cels.get(col+line*9).b.setText(" ");
                 }
                 else {
                     cels.get(col+line*9).b.setText(String.valueOf(jogoPuzzle[line].charAt(col)));
@@ -79,7 +79,7 @@ public class Sudoku extends JFrame {
                         if(cels.get(col+line*9).b.getText().equals(String.valueOf(jogoSolucao[line].charAt(col)))){
                             certos++;
                         }
-                        else if(!cels.get(col+line*9).b.getText().equals("   ")){
+                        else if(!cels.get(col+line*9).b.getText().equals(" ")){
                             cels.get(col + line * 9).b.setBackground(Color.RED);
                         }
                     }

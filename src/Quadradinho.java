@@ -31,7 +31,9 @@ public class Quadradinho extends JPanel {
         b.getInputMap().put(KeyStroke.getKeyStroke("7"), "sete");
         b.getInputMap().put(KeyStroke.getKeyStroke("8"), "oito");
         b.getInputMap().put(KeyStroke.getKeyStroke("9"), "nove");
-        //b.getInputMap().put(KeyStroke.getKeyStroke("⌫"), "delete");
+        b.getInputMap().put(KeyStroke.getKeyStroke("⌫"), "delete-mac");
+        b.getInputMap().put(KeyStroke.getKeyStroke("Delete"), "delete");
+        b.getInputMap().put(KeyStroke.getKeyStroke("Backspace"), "backspace");
 
         b.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
@@ -89,7 +91,7 @@ public class Quadradinho extends JPanel {
                         b.setBackground(Color.WHITE);
                     }
                 }
-                if(KeyEvent.getKeyText(e.getKeyCode()).equals("⌫")) {
+                if(KeyEvent.getKeyText(e.getKeyCode()).equals("Delete") || KeyEvent.getKeyText(e.getKeyCode()).equals("Backspace") || KeyEvent.getKeyText(e.getKeyCode()).equals("⌫")) {
                     if(editavel == true) {
                         b.setText(" ");
                         b.setBackground(Color.WHITE);
