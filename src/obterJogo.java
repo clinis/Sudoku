@@ -7,8 +7,8 @@ import java.util.List;
 public class obterJogo {
     private static final String cvsSplitBy = ",";
 
-    //private static final String csvFile = "C:/Users/dinis/Documents/GitHub/Sudoku/res/btest.csv";
-    private static final String csvFile = "./res/btest.csv";
+    private static final String csvFile = "C:/Users/dinis/Documents/GitHub/Sudoku/res/btest.csv";
+    //private static final String csvFile = "./res/btest.csv";
 
     //// lê do ficheiro fileName, retorna array com cada linha
     private static String[] readLines(String fileName) throws IOException {
@@ -37,7 +37,7 @@ public class obterJogo {
 
     //// retorna array de 9 linhas com 9 caracteres cada
     public static String[] deLinhaPara9x9(String linha) {
-        assert linha.length() % 9 == 0;
+        //assert linha.length() % 9 == 0;
         String[] splitLine = new String[linha.length() / 9];
         for (int index = 0; index < splitLine.length; index++)
             splitLine[index] = linha.substring(index * 9, index * 9 + 9);

@@ -16,6 +16,12 @@ public class Quadradinho extends JPanel {
         b.setEditable(false);
         b.setFont(new Font("Verdana", Font.BOLD, 40));
 
+        b.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if(editavel == true)
+                    b.setBackground(Color.LIGHT_GRAY);
+            }
+        });
         b.getInputMap().put(KeyStroke.getKeyStroke("1"), "um");
         b.getInputMap().put(KeyStroke.getKeyStroke("2"), "dois");
         b.getInputMap().put(KeyStroke.getKeyStroke("3"), "tres");

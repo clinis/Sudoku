@@ -79,7 +79,7 @@ public class Sudoku extends JFrame {
                         if(cels.get(col+line*9).b.getText().equals(String.valueOf(jogoSolucao[line].charAt(col)))){
                             certos++;
                         }
-                        else {
+                        else if(!cels.get(col+line*9).b.getText().equals("   ")){
                             cels.get(col + line * 9).b.setBackground(Color.RED);
                         }
                     }
@@ -90,8 +90,7 @@ public class Sudoku extends JFrame {
                             cels.get(col+line*9).b.setBackground(Color.GREEN);
                         }
                     }
-                }
-                else {
+                } else {
                     certos = 0;
                 }
             }
@@ -102,6 +101,9 @@ public class Sudoku extends JFrame {
 
         add(main,BorderLayout.CENTER);
         add(panelInferior,BorderLayout.SOUTH);
+
+        addWindowListener(new EscutaJanela());
+
         obterJogo.imprimirSolucao(jogoIndex);
     }
 
@@ -133,6 +135,13 @@ public class Sudoku extends JFrame {
             if(line != 2 && line != 6) {
                 cel.setBorder(BorderFactory.createMatteBorder(1, 3, 1, 1, Color.BLACK));
             }
+        }
+    }
+
+    class EscutaJanela extends WindowAdapter {
+        public void windowClosing(WindowEvent e) {
+            //setVisible(true);
+            dispose();
         }
     }
 
