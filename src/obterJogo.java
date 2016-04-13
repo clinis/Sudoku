@@ -6,7 +6,9 @@ import java.util.List;
 
 public class obterJogo {
     private static final String cvsSplitBy = ",";
-    private static final String csvFile = "./res/btest.csv";
+
+    private static final String csvFile = "C:/Users/dinis/Documents/GitHub/Sudoku/res/btest.csv";
+    //private static final String csvFile = "./res/btest.csv";
 
     //// lê do ficheiro fileName, retorna array com cada linha
     private static String[] readLines(String fileName) throws IOException {
@@ -34,8 +36,8 @@ public class obterJogo {
     }
 
     //// retorna array de 9 linhas com 9 caracteres cada
-    public static String[] deLinhaPara9x9(String linha){
-        assert linha.length() % 9 == 0;
+    public static String[] deLinhaPara9x9(String linha) {
+        //assert linha.length() % 9 == 0;
         String[] splitLine = new String[linha.length() / 9];
         for (int index = 0; index < splitLine.length; index++)
             splitLine[index] = linha.substring(index * 9, index * 9 + 9);
@@ -43,17 +45,17 @@ public class obterJogo {
     }
 
     public static void imprimirSolucao(int indexJogo) throws IOException {
-        String[] tem = deLinhaPara9x9(PuzzleOUSolucao(indexJogo,1));
+        String[] tem = deLinhaPara9x9(PuzzleOUSolucao(indexJogo, 1));
         for (int i = 0; i < 9; i++) {
             System.out.println(tem[i]);
         }
     }
 
-    public static int escolherJogoIndexAleatoriamente(){
+    public static int escolherJogoIndexAleatoriamente() {
         int lower = 0,
                 upper = 3;
         int r = (int) (Math.random() * (upper - lower)) + lower;
-        System.out.println("o numero random foi "+r);
+        System.out.println("o numero random foi " + r);
         return r;
     }
 
@@ -63,7 +65,7 @@ public class obterJogo {
 
         int asw = escolherJogoIndexAleatoriamente();
         {
-            String[] tem = deLinhaPara9x9(PuzzleOUSolucao(asw,0));
+            String[] tem = deLinhaPara9x9(PuzzleOUSolucao(asw, 0));
             for (int i = 0; i < 9; i++) {
                 System.out.println(tem[i]);
             }

@@ -2,7 +2,7 @@ import java.applet.*;
 import java.io.IOException;
 
 public class TestApplet extends Applet {
-    GUIi novaJanela = null;
+    Sudoku novaJanela = null;
 
     public static void main(String args[]) {
         TestApplet app = new TestApplet();
@@ -11,7 +11,8 @@ public class TestApplet extends Applet {
 
     public void init() {
         try {
-            novaJanela = new GUIi();
+            novaJanela = new Sudoku();
+            novaJanela.setVisible(true);
         } catch (IOException e) {
             e.printStackTrace();
         }
