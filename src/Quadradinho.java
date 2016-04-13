@@ -2,16 +2,17 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class Cells extends JPanel {
-    public boolean edita=true;
+public class Quadradinho extends JPanel {
+    public boolean editavel = true;
     public JTextArea b;
 
-    Cells(int a) {
+    Quadradinho(int a) {
+        setLayout(new BorderLayout());
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         setVisible(true);
-        setLayout(new BorderLayout());
-        b=new JTextArea(Integer.toString(a));
+
+        b = new JTextArea(Integer.toString(a));
         b.setEditable(false);
         b.setFont(new Font("Verdana", Font.BOLD, 40));
 
@@ -24,72 +25,73 @@ public class Cells extends JPanel {
         b.getInputMap().put(KeyStroke.getKeyStroke("7"), "sete");
         b.getInputMap().put(KeyStroke.getKeyStroke("8"), "oito");
         b.getInputMap().put(KeyStroke.getKeyStroke("9"), "nove");
-        b.getInputMap().put(KeyStroke.getKeyStroke("⌫"), "delete");
+        //b.getInputMap().put(KeyStroke.getKeyStroke("⌫"), "delete");
 
         b.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 if(KeyEvent.getKeyText(e.getKeyCode()).equals("1")) {
-                    if(edita==true) {
+                    if(editavel == true) {
                         b.setText("1");
                         b.setBackground(Color.WHITE);
                     }
                 }
                 if(KeyEvent.getKeyText(e.getKeyCode()).equals("2")) {
-                    if(edita==true) {
+                    if(editavel == true) {
                         b.setText("2");
                         b.setBackground(Color.WHITE);
                     }
                 }
                 if(KeyEvent.getKeyText(e.getKeyCode()).equals("3")) {
-                    if(edita==true) {
+                    if(editavel == true) {
                         b.setText("3");
                         b.setBackground(Color.WHITE);
                     }
                 }
                 if(KeyEvent.getKeyText(e.getKeyCode()).equals("4")) {
-                    if(edita==true) {
+                    if(editavel == true) {
                         b.setText("4");
                         b.setBackground(Color.WHITE);
                     }
                 }
                 if(KeyEvent.getKeyText(e.getKeyCode()).equals("5")) {
-                    if(edita==true) {
+                    if(editavel == true) {
                         b.setText("5");
                         b.setBackground(Color.WHITE);
                     }
                 }
                 if(KeyEvent.getKeyText(e.getKeyCode()).equals("6")) {
-                    if(edita==true) {
+                    if(editavel == true) {
                         b.setText("6");
                         b.setBackground(Color.WHITE);
                     }
                 }
                 if(KeyEvent.getKeyText(e.getKeyCode()).equals("7")) {
-                    if(edita==true) {
+                    if(editavel == true) {
                         b.setText("7");
                         b.setBackground(Color.WHITE);
                     }
                 }
                 if(KeyEvent.getKeyText(e.getKeyCode()).equals("8")) {
-                    if(edita==true) {
+                    if(editavel == true) {
                         b.setText("8");
                         b.setBackground(Color.WHITE);
                     }
                 }
                 if(KeyEvent.getKeyText(e.getKeyCode()).equals("9")) {
-                    if(edita==true) {
+                    if(editavel == true) {
                         b.setText("9");
                         b.setBackground(Color.WHITE);
                     }
                 }
                 if(KeyEvent.getKeyText(e.getKeyCode()).equals("⌫")) {
-                    if(edita==true) {
-                        b.setText("  ");
+                    if(editavel == true) {
+                        b.setText(" ");
                         b.setBackground(Color.WHITE);
                     }
                 }
             }
         });
+
         b.requestFocus();
         add(b,BorderLayout.CENTER);
     }
