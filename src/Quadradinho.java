@@ -16,12 +16,15 @@ public class Quadradinho extends JPanel {
         b.setEditable(false);
         b.setFont(new Font("Verdana", Font.BOLD, 40));
 
+
         b.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
+                //System.out.println(a + "::l" + a/9 + ":c" + a%9); // imprime informacoes do quadradinho clicado
                 if(editavel == true)
                     b.setBackground(Color.LIGHT_GRAY);
             }
         });
+
         b.getInputMap().put(KeyStroke.getKeyStroke("1"), "um");
         b.getInputMap().put(KeyStroke.getKeyStroke("2"), "dois");
         b.getInputMap().put(KeyStroke.getKeyStroke("3"), "tres");
@@ -34,7 +37,6 @@ public class Quadradinho extends JPanel {
         b.getInputMap().put(KeyStroke.getKeyStroke("⌫"), "delete-mac");
         b.getInputMap().put(KeyStroke.getKeyStroke("Delete"), "delete");
         b.getInputMap().put(KeyStroke.getKeyStroke("Backspace"), "backspace");
-
         b.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 if(KeyEvent.getKeyText(e.getKeyCode()).equals("1")) {
