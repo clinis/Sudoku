@@ -34,9 +34,9 @@ public class Quadradinho extends JPanel {
             }
         });
         qt.addKeyListener(new KeyAdapter() {
-            public void keyTyped(KeyEvent e) {
+            public void keyPressed(KeyEvent e) {
                 String tecla = KeyEvent.getKeyText(e.getKeyChar());
-                System.out.println(tecla);
+                //System.out.println(tecla);
                 if( tecla.equals("1") ||
                     tecla.equals("2") ||
                     tecla.equals("3") ||

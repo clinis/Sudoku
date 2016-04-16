@@ -117,7 +117,7 @@ public class Sudoku extends JFrame {
         if (qe != null ) {
             for (int line = 0; line < 9; line++) {
                 for (int col = 0; col < 9; col++) {
-                    qe.add(new Quadradinho(col+line*9, jogoPuzzle, cels));
+                    qe.add(new Quadradinho(col+line*9, jogoSolucao, cels));
                     desenhaRegioes(qe.get(col+line*9), line, col);
                     w.add(qe.get(col+line*9));
                 }
