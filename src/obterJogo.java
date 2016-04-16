@@ -11,7 +11,7 @@ public class obterJogo {
     //private static final String csvFile = "./res/btest.csv";
 
     //// lê do ficheiro fileName, retorna array com cada linha
-    private static String[] readLines(String fileName) throws IOException {
+    public static String[] readLines(String fileName) throws IOException {
         FileReader fileReader = new FileReader(fileName);
         BufferedReader bufferedReader = new BufferedReader(fileReader);
         List<String> lines = new ArrayList<>();
@@ -24,7 +24,7 @@ public class obterJogo {
     }
 
     //// retorna em String a linha do jogo indexJogo
-    private static String qualJogo(int indexJogo) throws IOException {
+    public static String qualJogo(int indexJogo) throws IOException {
         String[] lines = readLines(csvFile);
         return lines[indexJogo];
     }

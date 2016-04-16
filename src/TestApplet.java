@@ -1,7 +1,7 @@
-import java.applet.*;
+import javax.swing.*;
 import java.io.IOException;
 
-public class TestApplet extends Applet {
+public class TestApplet extends JApplet {
     Sudoku novaJanela = null;
 
     public static void main(String args[]) {

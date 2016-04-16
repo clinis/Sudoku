@@ -1,106 +1,81 @@
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import javax.swing.*;
 
 public class Quadradinho extends JPanel {
     public boolean editavel = true;
-    public JTextArea b;
+    public JTextArea qt;
 
-    Quadradinho(int a) {
+    Quadradinho(int posicao) {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
+        qt = new JTextArea(Integer.toString(posicao));
+        qt.setEditable(false);
+        qt.setFont(new Font("Verdana", Font.BOLD, 40));
+
         setVisible(true);
+        //qt.requestFocus();
+        add(qt,BorderLayout.CENTER);
+    }
 
-        b = new JTextArea(Integer.toString(a));
-        b.setEditable(false);
-        b.setFont(new Font("Verdana", Font.BOLD, 40));
+    Quadradinho(int posicao, String[] jogo, ArrayList<Quadradinho> cels) {
+        this(posicao);
 
-        b.addMouseListener(new MouseAdapter() {
+        qt.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
+                //System.out.println(a + "::l" + a/9 + ":c" + a%9); // imprime informacoes do quadradinho clicado
                 if(editavel == true)
-                    b.setBackground(Color.LIGHT_GRAY);
+                    qt.setBackground(Color.LIGHT_GRAY);
             }
         });
-        b.getInputMap().put(KeyStroke.getKeyStroke("1"), "um");
-        b.getInputMap().put(KeyStroke.getKeyStroke("2"), "dois");
-        b.getInputMap().put(KeyStroke.getKeyStroke("3"), "tres");
-        b.getInputMap().put(KeyStroke.getKeyStroke("4"), "quatro");
-        b.getInputMap().put(KeyStroke.getKeyStroke("5"), "cinco");
-        b.getInputMap().put(KeyStroke.getKeyStroke("6"), "seis");
-        b.getInputMap().put(KeyStroke.getKeyStroke("7"), "sete");
-        b.getInputMap().put(KeyStroke.getKeyStroke("8"), "oito");
-        b.getInputMap().put(KeyStroke.getKeyStroke("9"), "nove");
-        b.getInputMap().put(KeyStroke.getKeyStroke("⌫"), "delete-mac");
-        b.getInputMap().put(KeyStroke.getKeyStroke("Delete"), "delete");
-        b.getInputMap().put(KeyStroke.getKeyStroke("Backspace"), "backspace");
-
-        b.addKeyListener(new KeyAdapter() {
+        qt.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
-                if(KeyEvent.getKeyText(e.getKeyCode()).equals("1")) {
+                String tecla = KeyEvent.getKeyText(e.getKeyChar());
+                //System.out.println(tecla);
+                if( tecla.equals("1") ||
+                    tecla.equals("2") ||
+                    tecla.equals("3") ||
+                    tecla.equals("4") ||
+                    tecla.equals("5") ||
+                    tecla.equals("6") ||
+                    tecla.equals("7") ||
+                    tecla.equals("8") ||
+                    tecla.equals("9") ) {
                     if(editavel == true) {
-                        b.setText("1");
-                        b.setBackground(Color.WHITE);
+                        qt.setText(tecla);
+                        qt.setBackground(Color.WHITE);
                     }
                 }
-                if(KeyEvent.getKeyText(e.getKeyCode()).equals("2")) {
+                if( tecla.equals("Delete") ||
+                    tecla.equals("Backspace") ||
+                    tecla.equals("⌫") ) {
                     if(editavel == true) {
-                        b.setText("2");
-                        b.setBackground(Color.WHITE);
+                        qt.setText(" ");
+                        qt.setBackground(Color.WHITE);
                     }
                 }
-                if(KeyEvent.getKeyText(e.getKeyCode()).equals("3")) {
+                if(KeyEvent.getKeyText(e.getKeyCode()).equals("R")) {
                     if(editavel == true) {
-                        b.setText("3");
-                        b.setBackground(Color.WHITE);
+                        qt.setText(String.valueOf(jogo[posicao/9].charAt(posicao%9)));
+                        qt.setBackground(Color.WHITE);
                     }
                 }
-                if(KeyEvent.getKeyText(e.getKeyCode()).equals("4")) {
+                if(KeyEvent.getKeyText(e.getKeyCode()).equals("H")) {
                     if(editavel == true) {
-                        b.setText("4");
-                        b.setBackground(Color.WHITE);
-                    }
-                }
-                if(KeyEvent.getKeyText(e.getKeyCode()).equals("5")) {
-                    if(editavel == true) {
-                        b.setText("5");
-                        b.setBackground(Color.WHITE);
-                    }
-                }
-                if(KeyEvent.getKeyText(e.getKeyCode()).equals("6")) {
-                    if(editavel == true) {
-                        b.setText("6");
-                        b.setBackground(Color.WHITE);
-                    }
-                }
-                if(KeyEvent.getKeyText(e.getKeyCode()).equals("7")) {
-                    if(editavel == true) {
-                        b.setText("7");
-                        b.setBackground(Color.WHITE);
-                    }
-                }
-                if(KeyEvent.getKeyText(e.getKeyCode()).equals("8")) {
-                    if(editavel == true) {
-                        b.setText("8");
-                        b.setBackground(Color.WHITE);
-                    }
-                }
-                if(KeyEvent.getKeyText(e.getKeyCode()).equals("9")) {
-                    if(editavel == true) {
-                        b.setText("9");
-                        b.setBackground(Color.WHITE);
-                    }
-                }
-                if(KeyEvent.getKeyText(e.getKeyCode()).equals("Delete") || KeyEvent.getKeyText(e.getKeyCode()).equals("Backspace") || KeyEvent.getKeyText(e.getKeyCode()).equals("⌫")) {
-                    if(editavel == true) {
-                        b.setText(" ");
-                        b.setBackground(Color.WHITE);
+                        int r = (int) (Math.random() * 80);
+                        if(cels.get(r).editavel == true) {
+                            cels.get(r).qt.setText(String.valueOf(jogo[r/9].charAt(r%9)));
+                            cels.get(r).qt.setBackground(Color.WHITE);
+                        }
+                        qt.setBackground(Color.WHITE);
                     }
                 }
             }
         });
-
-        b.requestFocus();
-        add(b,BorderLayout.CENTER);
     }
 }
