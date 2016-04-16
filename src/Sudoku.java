@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import java.io.IOException;
 
 public class Sudoku extends JFrame {
-    ArrayList<QuadradinhoEventos> cels;
-    ArrayList<Quadradinho> solu;
+    ArrayList<Quadradinho> cels;
     boolean mostrarJanelaSolucao = false;
     int certos = 0,
         dicasRestantes = 5;
@@ -22,7 +21,7 @@ public class Sudoku extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        cels = new ArrayList<QuadradinhoEventos>();
+        cels = new ArrayList<Quadradinho>();
         add(desenhaGrelha(cels,null),BorderLayout.CENTER);
 
         JPanel panelInferior = new JPanel();
@@ -113,12 +112,12 @@ public class Sudoku extends JFrame {
         obterJogo.imprimirSolucao(jogoIndex);
     }
 
-    public JPanel desenhaGrelha(ArrayList<QuadradinhoEventos> qe, ArrayList<Quadradinho> q) {
+    public JPanel desenhaGrelha(ArrayList<Quadradinho> qe, ArrayList<Quadradinho> q) {
         JPanel w = new JPanel(new GridLayout(9,9));
         if (qe != null ) {
             for (int line = 0; line < 9; line++) {
                 for (int col = 0; col < 9; col++) {
-                    qe.add(new QuadradinhoEventos(col+line*9));
+                    qe.add(new Quadradinho(col+line*9, jogoPuzzle, cels));
                     desenhaRegioes(qe.get(col+line*9), line, col);
                     w.add(qe.get(col+line*9));
                 }
@@ -182,65 +181,6 @@ public class Sudoku extends JFrame {
             if(line != 2 && line != 6) {
                 cel.setBorder(BorderFactory.createMatteBorder(1, 3, 1, 1, Color.BLACK));
             }
-        }
-    }
-
-    class QuadradinhoEventos extends Quadradinho {
-        QuadradinhoEventos(int a) {
-            super(a);
-            //qt.requestFocus();
-
-            qt.addMouseListener(new MouseAdapter() {
-                public void mouseClicked(MouseEvent e) {
-                    //System.out.println(a + "::l" + a/9 + ":c" + a%9); // imprime informacoes do quadradinho clicado
-                    if(editavel == true)
-                        qt.setBackground(Color.LIGHT_GRAY);
-                }
-            });
-            qt.addKeyListener(new KeyAdapter() {
-                public void keyTyped(KeyEvent e) {
-                    String tecla = KeyEvent.getKeyText(e.getKeyChar());
-                    //System.out.println(tecla);
-                    if( tecla.equals("1") ||
-                        tecla.equals("2") ||
-                        tecla.equals("3") ||
-                        tecla.equals("4") ||
-                        tecla.equals("5") ||
-                        tecla.equals("6") ||
-                        tecla.equals("7") ||
-                        tecla.equals("8") ||
-                        tecla.equals("9") ) {
-                        if(editavel == true) {
-                            qt.setText(tecla);
-                            qt.setBackground(Color.WHITE);
-                        }
-                    }
-                    if( tecla.equals("Delete") ||
-                        tecla.equals("Backspace") ||
-                        tecla.equals("⌫") ) {
-                        if(editavel == true) {
-                            qt.setText(" ");
-                            qt.setBackground(Color.WHITE);
-                        }
-                    }
-                    if(KeyEvent.getKeyText(e.getKeyCode()).equals("R")) {
-                        if(editavel == true) {
-                            qt.setText(String.valueOf(jogoSolucao[a/9].charAt(a%9)));
-                            qt.setBackground(Color.WHITE);
-                        }
-                    }
-                    if(KeyEvent.getKeyText(e.getKeyCode()).equals("H")) {
-                        if(editavel == true) {
-                            int r = (int) (Math.random() * 80);
-                            if(cels.get(r).editavel == true) {
-                                cels.get(r).qt.setText(String.valueOf(jogoSolucao[r/9].charAt(r%9)));
-                                cels.get(r).qt.setBackground(Color.WHITE);
-                            }
-                            qt.setBackground(Color.WHITE);
-                        }
-                    }
-                }
-            });
         }
     }
 
