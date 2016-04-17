@@ -38,13 +38,12 @@ class Quadradinho extends JPanel {
      * Construtor para células <b>sem eventos</b><br>
      * <i>e.g. grelha da Janela Solução</i><br>
      * Define as margens da célula, adiciona um JTextArea, define um estilo para as letras e coloca a célula visivel.
-     * @param posicao posição da célula na grelha. De 0 a 81 (esquerda para a direita, cima para baixo)
      */
-    Quadradinho(int posicao) {
+    Quadradinho() {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-        qt = new JTextArea(Integer.toString(posicao));
+        qt = new JTextArea();
         qt.setEditable(false);
         qt.setFont(new Font("Verdana", Font.BOLD, 40));
         add(qt, BorderLayout.CENTER);
@@ -67,18 +66,19 @@ class Quadradinho extends JPanel {
      *          <li>H: coloca um número certo numa célula aleatória</li>
      *     </ul></li>
      * </ul>
-     * @param posicao posição da célula na grelha. De 0 a 81 (esquerda para a direita, cima para baixo)
+     * @param line linha da célula na grelha
+     * @param col coluna da célula na grelha
      * @param jogo grelha em questão. Pode ser a grelha de Puzzle ou de Solução.
      *             Necessário para fazer comparações na funções de R e H.
      * @param cels número colocado pelo utilizador na célula em questão.
      *             Necessário para fazer comparações na funções de R e H.
      */
-    Quadradinho(int posicao, String[] jogo, ArrayList<Quadradinho> cels) {
-        this(posicao);
+    Quadradinho(int line, int col, String[] jogo, ArrayList<Quadradinho> cels) {
+        this();
 
         qt.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                //System.out.println(posicao + "::l" + posicao/9 + ":c" + posicao%9); // imprime informacoes do quadradinho clicado
+                //System.out.println("posicao: "+(col+line*9)+" l:"+line+" c:"+col); // imprime informacoes do quadradinho clicado
                 if (editavel == true)
                     qt.setBackground(Color.LIGHT_GRAY);
             }
@@ -111,7 +111,7 @@ class Quadradinho extends JPanel {
                 }
                 if (KeyEvent.getKeyText(e.getKeyCode()).equals("R")) {
                     if (editavel == true) {
-                        qt.setText(String.valueOf(jogo[posicao/9].charAt(posicao%9)));
+                        qt.setText(String.valueOf(jogo[line].charAt(col)));
                         qt.setBackground(Color.WHITE);
                     }
                 }

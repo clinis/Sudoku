@@ -111,7 +111,7 @@ class Sudoku extends JFrame {
                             cels.get(col+line*9).qt.setBackground(Color.GREEN);
                         }
                     }
-                    JOptionPane.showMessageDialog(getContentPane(), "Chegaste ao fim do jogo!","Parabéns!", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(getContentPane(), "Parabéns! Chegaste ao fim do jogo.","Parabéns!", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     certos = 0;
                 }
@@ -163,13 +163,13 @@ class Sudoku extends JFrame {
      * @return JPanel com as células que depois pode ser colocado na janela Container pretendido
      */
     private JPanel desenhaGrelha(ArrayList<Quadradinho> qe, ArrayList<Quadradinho> q) {
-        JPanel w = new JPanel(new GridLayout(9, 9));
+        JPanel grelha = new JPanel(new GridLayout(9, 9));
         if (qe != null) {
             for (int line = 0; line < 9; line++) {
                 for (int col = 0; col < 9; col++) {
-                    qe.add(new Quadradinho(col+line*9, jogoSolucao, cels));
+                    qe.add(new Quadradinho(line, col, jogoSolucao, cels));
                     desenhaRegioes(qe.get(col+line*9), line, col);
-                    w.add(qe.get(col+line*9));
+                    grelha.add(qe.get(col+line*9));
                 }
             }
             for (int line = 0; line < 9; line++) {
@@ -186,9 +186,9 @@ class Sudoku extends JFrame {
         } else if (q != null) {
             for (int line = 0; line < 9; line++) {
                 for (int col = 0; col < 9; col++) {
-                    q.add(new Quadradinho(col+line*9));
+                    q.add(new Quadradinho());
                     desenhaRegioes(q.get(col+line*9), line, col);
-                    w.add(q.get(col+line*9));
+                    grelha.add(q.get(col+line*9));
                 }
             }
             for (int line = 0; line < 9; line++) {
@@ -199,7 +199,7 @@ class Sudoku extends JFrame {
                 }
             }
         }
-        return w;
+        return grelha;
     }
 
     /**
@@ -212,31 +212,31 @@ class Sudoku extends JFrame {
      */
     private void desenhaRegioes(Quadradinho cel, int line, int col) {
         if (line == 2) {
-            cel.setBorder(BorderFactory.createMatteBorder(1, 1, 3, 1, Color.BLACK));
+            cel.setBorder(BorderFactory.createMatteBorder(1, 1, 4, 1, Color.BLACK));
         }
         if (line == 6) {
-            cel.setBorder(BorderFactory.createMatteBorder(3, 1, 1, 1, Color.BLACK));
+            cel.setBorder(BorderFactory.createMatteBorder(4, 1, 1, 1, Color.BLACK));
         }
         if (col == 2) {
             if (line == 2) {
-                cel.setBorder(BorderFactory.createMatteBorder(1, 1, 3, 3, Color.BLACK));
+                cel.setBorder(BorderFactory.createMatteBorder(1, 1, 4, 4, Color.BLACK));
             }
             if (line == 6) {
-                cel.setBorder(BorderFactory.createMatteBorder(3, 1, 1, 3, Color.BLACK));
+                cel.setBorder(BorderFactory.createMatteBorder(4, 1, 1, 4, Color.BLACK));
             }
             if (line != 2 && line != 6) {
-                cel.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 3, Color.BLACK));
+                cel.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 4, Color.BLACK));
             }
         }
         if (col == 6) {
             if (line == 2) {
-                cel.setBorder(BorderFactory.createMatteBorder(1, 3, 3, 1, Color.BLACK));
+                cel.setBorder(BorderFactory.createMatteBorder(1, 4, 4, 1, Color.BLACK));
             }
             if (line == 6) {
-                cel.setBorder(BorderFactory.createMatteBorder(3, 3, 1, 1, Color.BLACK));
+                cel.setBorder(BorderFactory.createMatteBorder(4, 4, 1, 1, Color.BLACK));
             }
             if (line != 2 && line != 6) {
-                cel.setBorder(BorderFactory.createMatteBorder(1, 3, 1, 1, Color.BLACK));
+                cel.setBorder(BorderFactory.createMatteBorder(1, 4, 1, 1, Color.BLACK));
             }
         }
     }
