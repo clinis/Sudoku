@@ -15,10 +15,8 @@ import javax.swing.*;
 /**
  * <h1>Classe com as características de cada célula</h1>
  * Cada célula é uma JPanel com um JTextArea não editável pelo utilizador no seu interior.<br>
- * A cada célula é atribuida um número de 0 a 80 (esquerda para a direita, cima para baixo) conforme
- * a sua posição na grelha e são também definidas as suas margens e o estilo da letra dos números.<br>
  * Cada célula tem uma variável que indica se o número na célula pode ser mudado no decorrer
- * do jogo (i.e., se é uma célula para o utilizador preencher).<br>
+ * do jogo (i.e., se é uma célula para o jogador preencher).<br>
  * Esta Classe tem dois construtores:
  * <ul>
  *     <li>Um para células sem eventos (e.g. grelha da janela Solução).</li>
@@ -61,7 +59,7 @@ class Quadradinho extends JPanel {
      *     <li>KeyListener: teclas pressionadas pelo utilizador
      *     <ul>
      *          <li>1, 2, 3, 4, 5, 6, 7, 8, 9: muda o número da célula para o número pressionado pelo utilizador</li>
-     *          <li>Delete ou Backspace: elimina o número da célulo</li>
+     *          <li>Delete ou Backspace: elimina o número da célula</li>
      *          <li>R: coloca o número certo na célula selecionada</li>
      *          <li>H: coloca um número certo numa célula aleatória</li>
      *     </ul></li>

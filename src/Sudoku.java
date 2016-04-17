@@ -50,7 +50,7 @@ class Sudoku extends JFrame {
      *     <li> bVerificar: percorre cada uma das células e compara com a mesma posição na Solução.
      *                      Se o número estiver errado, coloca o fundo dessa célula a vermelho.
      *                      Se todas as células estiverem certas, coloca todos os fundos a verde e motra um diálogo de Parabéns</li>
-     *     <li> bDica: gera um número aleatório entre 0 e 80, se a célula nessa posição for edtivável, preenche-a com o número certo</li>
+     *     <li> bDica: gera um número aleatório entre 0 e 80, se a célula nessa posição for editável, preenche-a com o número certo</li>
      * </ul>
      * Imprime a solução do jogo na consola.
      * @throws IOException
