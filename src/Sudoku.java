@@ -7,6 +7,7 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.io.IOException;
 
@@ -28,12 +29,15 @@ class Sudoku extends JFrame {
     /** Variável que conta quantas dicas o jogador já usou (do botão de Dicas)*/
     private int dicasRestantes = 5;
 
-    /** Jogo escolhido aleatoriamente */
-    private final int jogoIndex = obterJogo.escolherJogoIndexAleatoriamente();
+    private final obterJogo obter = new obterJogo();
+    /** Ficheiro .csv com vários jogos e as suas informações (Puzzle, Solução, etc.) */
+    private final InputStream resourceFile = getClass().getResourceAsStream("/" + "btest.csv");
+    /** Ler o ficheiro, ler uma linha aleatória e guardar as informações desse jogo numa String */
+    private String jogo = obter.readLine(resourceFile, obter.escolherJogoIndexAleatoriamente());
     /** Puzzle do jogo escolhido */
-    private final String[] jogoPuzzle = obterJogo.deLinhaPara9x9(obterJogo.PuzzleOUSolucao(jogoIndex, 0));
+    private final String[] jogoPuzzle = obter.deLinhaPara9x9(obter.PuzzleOUSolucao(0, jogo));
     /** Solução do jogo escolhido */
-    private final String[] jogoSolucao = obterJogo.deLinhaPara9x9(obterJogo.PuzzleOUSolucao(jogoIndex, 1));
+    private final String[] jogoSolucao = obter.deLinhaPara9x9(obter.PuzzleOUSolucao(1, jogo));
 
     /**
      * Construtor que cria a janela principal e os elementos do jogo.<br>
@@ -143,7 +147,7 @@ class Sudoku extends JFrame {
             }
         });
 
-        obterJogo.imprimirSolucao(jogoIndex);
+        obter.imprimirSolucao(jogo);
     }
 
     /**
