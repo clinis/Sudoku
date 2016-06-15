@@ -7,9 +7,9 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import java.io.InputStream;
+import java.io.*;
+import java.net.Socket;
 import java.util.ArrayList;
-import java.io.IOException;
 
 /**
  * <h1>Classe principal</h1>
@@ -69,72 +69,6 @@ class Sudoku extends JFrame {
                 bVerificar = new JButton("Verificar resposta"),
                 bDica = new JButton("Dica ("+dicasRestantes+")");
 
-        JFrame janelaSolucao = new JFrame("Solução");
-        janelaSolucao.setSize(500, 500);
-        janelaSolucao.add(desenhaGrelha(null, new ArrayList<Quadradinho>()));
-        janelaSolucao.setVisible(false);
-        janelaSolucao.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent we) {
-                janelaSolucao.dispose();
-                mostrarJanelaSolucao = false;
-                bSolucao.setText("Mostrar Solução");
-            }
-        });
-        bSolucao.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                if (mostrarJanelaSolucao == false) {
-                    janelaSolucao.setVisible(true);
-                    mostrarJanelaSolucao = true;
-                    bSolucao.setText("Ocultar Solução");
-                } else {
-                    janelaSolucao.setVisible(false);
-                    mostrarJanelaSolucao = false;
-                    bSolucao.setText("Mostrar Solução");
-                }
-            }
-        });
-
-        bVerificar.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                for (int line = 0; line < 9; line++) {
-                    for (int col = 0; col < 9; col++) {
-                        if (cels.get(col+line*9).qt.getText().equals(String.valueOf(jogoSolucao[line].charAt(col)))) {
-                            certos++;
-                        } else if (!cels.get(col+line*9).qt.getText().equals(" ")) {
-                            cels.get(col+line*9).qt.setBackground(Color.RED);
-                        }
-                    }
-                }
-                if (certos == 81) {
-                    for (int line = 0; line < 9; line++) {
-                        for (int col = 0; col < 9; col++) {
-                            cels.get(col+line*9).qt.setBackground(Color.GREEN);
-                        }
-                    }
-                    JOptionPane.showMessageDialog(getContentPane(), "Parabéns! Chegaste ao fim do jogo.","Parabéns!", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    certos = 0;
-                }
-            }
-        });
-
-        bDica.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                int r = (int)(Math.random() * 80);
-
-                if (cels.get(r).editavel == true && dicasRestantes > 0) {
-                    cels.get(r).qt.setText(String.valueOf(jogoSolucao[r / 9].charAt(r % 9)));
-                    cels.get(r).qt.setBackground(Color.WHITE);
-
-                    dicasRestantes = dicasRestantes - 1;
-                    bDica.setText("Dica ("+dicasRestantes+")");
-                }
-                if (dicasRestantes == 0) {
-                    bDica.setEnabled(false);
-                }
-            }
-        });
-
         panelInferior.add(bSolucao);
         panelInferior.add(bVerificar);
         panelInferior.add(bDica);
@@ -146,6 +80,31 @@ class Sudoku extends JFrame {
                 dispose();
             }
         });
+
+        String hostName = "localhost";
+        int portNumber = 1331;
+
+        try (
+            Socket kkSocket = new Socket(hostName, portNumber);
+            PrintWriter out = new PrintWriter(kkSocket.getOutputStream(), true);
+            BufferedReader in = new BufferedReader(new InputStreamReader(kkSocket.getInputStream()));
+        ) {
+            BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
+            String fromServer;
+            String fromUser;
+
+            while ( (fromServer = in.readLine()) != null ) {
+                System.out.println("Server: " + fromServer);
+                if (fromServer.equals("Bye."))
+                    break;
+
+                fromUser = stdIn.readLine();
+                if (fromUser != null) {
+                    System.out.println("Client: " + fromUser);
+                    out.println(fromUser);
+                }
+            }
+        }
 
         obter.imprimirSolucao(jogo);
     }
