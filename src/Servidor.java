@@ -1,12 +1,14 @@
 import java.io.*;
+import java.lang.reflect.Array;
 import java.net.*;
+import java.util.ArrayList;
 
 public class Servidor {
     protected final int DIM = 5;
-    protected ObjectOutputStream oos[] = new ObjectOutputStream[DIM];
-    protected ObjectInputStream in[] = new ObjectInputStream[DIM];
+    protected ArrayList<ObjectOutputStream> oos = new ArrayList <ObjectOutputStream>();
+    protected ArrayList<ObjectInputStream> in = new ArrayList <ObjectInputStream>();
     protected ServerSocket SocketEscuta;
-    protected Socket[] meias = new Socket[5];
+    protected ArrayList<Socket> meias = new ArrayList<Socket>();
     protected Protocolo[] jogos = new Protocolo[5];
     int n = -1;
 
@@ -19,18 +21,19 @@ public class Servidor {
 
     public void waitForClients() {
         try {
-            while( n < DIM ) {
-                meias[n+1] = SocketEscuta.accept();
+            while( n+1 < DIM ) {
+                Socket supermeia=SocketEscuta.accept();
+                meias.add(supermeia);
                 n++;
-                //System.out.println(n);
 
-                oos[n] = new ObjectOutputStream(meias[n].getOutputStream());
-                in[n] = new ObjectInputStream(meias[n].getInputStream());
+                oos.add(new ObjectOutputStream(meias.get(n).getOutputStream()));
+                in.add(new ObjectInputStream(meias.get(n).getInputStream()));
 
                 Thread one = new Thread() {
                     public void run() {
+                        int meuclient = meias.indexOf(supermeia);
+                        System.out.println(meuclient);
                         int dicas = 5;
-
                         /** Puzzle do jogo escolhido */
                         final String[] jogoPuzzle;
                         /** Solução do jogo escolhido */
@@ -43,13 +46,10 @@ public class Servidor {
                             System.err.println(er.getMessage());
                         }
                         obterJogo obter = new obterJogo();
-                        int meuclient = n;
-                        String omeunome;
-                        int count = 0;
                         try{
                             jogos[meuclient] = new Protocolo();
                             jogos[meuclient].arg1 = meuclient;
-                            jogos[meuclient].envia(oos[meuclient]);
+                            jogos[meuclient].envia(oos.get(meuclient));
                             System.out.println("Cliente "+meuclient+" ligado.");
                         } catch (Exception er) {
                             System.err.println(er.getMessage());
@@ -69,7 +69,7 @@ public class Servidor {
                         try{
                             jogos[meuclient] = new Protocolo();
                             jogos[meuclient].arg1 = jogoPuzzle;
-                            jogos[meuclient].envia(oos[meuclient]);
+                            jogos[meuclient].envia(oos.get(meuclient));
 
                             System.out.println("Cliente "+meuclient+" com jogo atribuido. Solução:");
                             //obter.imprimirSolucao(jogo);
@@ -81,17 +81,20 @@ public class Servidor {
                         do{
                             try{
                                 jogos[meuclient] = new Protocolo();
-                                jogos[meuclient] = jogos[meuclient].recebe(in[meuclient]);
+                                jogos[meuclient] = jogos[meuclient].recebe(in.get(meuclient));
                             } catch (Exception er) {
-                                System.err.println(er.getMessage());
-
-                                System.out.println("sssss close");
+                                //System.err.println(er.getMessage());
+                                System.out.println("Cliente "+meuclient+" closed");
                                 try {
-                                    meias[meuclient].close();
-                                } catch (IOException e) {
+                                    meias.remove(meuclient);
+                                    oos.remove(meuclient);
+                                    in.remove(meuclient);
+                                    n=meuclient;
+                                    join();
+                                } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-                                break;
+                                //break;
                             }
 
                             String botaotipo = (String) jogos[meuclient].arg1;
@@ -100,7 +103,7 @@ public class Servidor {
                                     for (int col = 0; col < 9; col++) {
                                         try{
                                             jogos[meuclient] = new Protocolo();
-                                            jogos[meuclient] = jogos[meuclient].recebe(in[meuclient]);
+                                            jogos[meuclient] = jogos[meuclient].recebe(in.get(meuclient));
                                         }catch (Exception er) {
                                             System.err.println(er.getMessage());
                                         }
@@ -110,7 +113,7 @@ public class Servidor {
                                             try{
                                                 jogos[meuclient] = new Protocolo();
                                                 jogos[meuclient].arg1 = 2;
-                                                jogos[meuclient].envia(oos[meuclient]);
+                                                jogos[meuclient].envia(oos.get(meuclient));
                                             }catch (Exception er) {
                                                 System.err.println(er.getMessage());
                                             }
@@ -118,7 +121,7 @@ public class Servidor {
                                             try{
                                                 jogos[meuclient] = new Protocolo();
                                                 jogos[meuclient].arg1 = null;
-                                                jogos[meuclient].envia(oos[meuclient]);
+                                                jogos[meuclient].envia(oos.get(meuclient));
                                             } catch (Exception er) {
                                                 System.err.println(er.getMessage());
                                             }
@@ -147,7 +150,7 @@ public class Servidor {
                                 System.out.println("Cliente "+meuclient+" recebeu a dica "+(5-dicas));
                                 try{
                                     jogos[meuclient] = new Protocolo();
-                                    jogos[meuclient] = jogos[meuclient].recebe(in[meuclient]);
+                                    jogos[meuclient] = jogos[meuclient].recebe(in.get(meuclient));
                                 } catch (Exception er) {
                                     System.err.println(er.getMessage());
                                 }
@@ -160,7 +163,7 @@ public class Servidor {
                                     jogos[meuclient] = new Protocolo();
                                     jogos[meuclient].arg1 = celuladica;
                                     jogos[meuclient].arg2 = dicas;
-                                    jogos[meuclient].envia(oos[meuclient]);
+                                    jogos[meuclient].envia(oos.get(meuclient));
                                 }catch (Exception er) {
                                     System.err.println(er.getMessage());
                                 }
