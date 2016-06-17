@@ -1,7 +1,7 @@
 import java.io.*;
 import java.net.*;
 
-public class Serveocu{
+public class Servidor {
     protected final int DIM = 5;
     protected ObjectOutputStream oos[] = new ObjectOutputStream[DIM];
     protected ObjectInputStream in[] = new ObjectInputStream[DIM];
@@ -10,10 +10,10 @@ public class Serveocu{
     protected Protocolo[] jogos = new Protocolo[5];
     int n = -1;
 
-    public Serveocu() {
+    public Servidor() {
     }
 
-    public Serveocu(int listenPort) throws IOException {
+    public Servidor(int listenPort) throws IOException {
         SocketEscuta = new ServerSocket(listenPort, DIM);
     }
 
@@ -22,7 +22,7 @@ public class Serveocu{
             while( n < DIM ) {
                 meias[n+1] = SocketEscuta.accept();
                 n++;
-                System.out.println(n);
+                //System.out.println(n);
 
                 oos[n] = new ObjectOutputStream(meias[n].getOutputStream());
                 in[n] = new ObjectInputStream(meias[n].getInputStream());
@@ -30,14 +30,15 @@ public class Serveocu{
                 Thread one = new Thread() {
                     public void run() {
                         int dicas = 5;
-                        String jogo = "lkala";
-                        InputStream resourceFile = null;
+
                         /** Puzzle do jogo escolhido */
                         final String[] jogoPuzzle;
                         /** Solução do jogo escolhido */
                         final String[] jogoSolucao;
+                        String jogo = null;
+                        InputStream ficheiroJogos = null;
                         try{
-                            resourceFile = new FileInputStream("./res/btest.csv");
+                            ficheiroJogos = new FileInputStream("./res/btest.csv");
                         }catch (Exception er) {
                             System.err.println(er.getMessage());
                         }
@@ -49,19 +50,19 @@ public class Serveocu{
                             jogos[meuclient] = new Protocolo();
                             jogos[meuclient].arg1 = meuclient;
                             jogos[meuclient].envia(oos[meuclient]);
-                            System.out.println("Sucesso a connectar o cu nro "+meuclient);
+                            System.out.println("Cliente "+meuclient+" ligado.");
                         } catch (Exception er) {
                             System.err.println(er.getMessage());
                         }
 
                         // Get current time
                         long start = System.currentTimeMillis();
+
                         try{
-                            jogo = obter.readLine(resourceFile, obter.escolherJogoIndexAleatoriamente());
+                            jogo = obter.readLine(ficheiroJogos, obter.escolherJogoIndexAleatoriamente());
                         } catch (Exception er) {
                             System.err.println(er.getMessage());
                         }
-
                         jogoPuzzle = obter.deLinhaPara9x9(obter.PuzzleOUSolucao(0, jogo));
                         jogoSolucao = obter.deLinhaPara9x9(obter.PuzzleOUSolucao(1, jogo));
 
@@ -69,7 +70,10 @@ public class Serveocu{
                             jogos[meuclient] = new Protocolo();
                             jogos[meuclient].arg1 = jogoPuzzle;
                             jogos[meuclient].envia(oos[meuclient]);
-                            System.out.println("Sucesso a escolher o cu para o nro "+meuclient);
+
+                            System.out.println("Cliente "+meuclient+" com jogo atribuido. Solução:");
+                            //obter.imprimirSolucao(jogo);
+                            new Sudoku(jogoSolucao, meuclient);
                         } catch (Exception er) {
                             System.err.println(er.getMessage());
                         }
@@ -80,6 +84,14 @@ public class Serveocu{
                                 jogos[meuclient] = jogos[meuclient].recebe(in[meuclient]);
                             } catch (Exception er) {
                                 System.err.println(er.getMessage());
+
+                                System.out.println("sssss close");
+                                try {
+                                    meias[meuclient].close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                break;
                             }
 
                             String botaotipo = (String) jogos[meuclient].arg1;
@@ -126,13 +138,13 @@ public class Serveocu{
                                     presentSec = presentSec - 60;
                                 }
                                 if( presentSec < 10 ) {
-                                    System.out.println("Time - " + (int) elapsedTimeMin + ":0" + (int) presentSec);
+                                    System.out.println("Cliente "+meuclient+" verificou aos: " + (int) elapsedTimeMin + ":0" + (int) presentSec);
                                 } else {
-                                    System.out.println("Time - " + (int) elapsedTimeMin + ":" + (int) presentSec);
+                                    System.out.println("Cliente "+meuclient+" verificou aos: " + (int) elapsedTimeMin + ":" + (int) presentSec);
                                 }
                             }
                             if(botaotipo.equals("Dica")) {
-                                System.out.println("Envia dica num. "+(5-dicas));
+                                System.out.println("Cliente "+meuclient+" recebeu a dica "+(5-dicas));
                                 try{
                                     jogos[meuclient] = new Protocolo();
                                     jogos[meuclient] = jogos[meuclient].recebe(in[meuclient]);
@@ -166,7 +178,7 @@ public class Serveocu{
     }
     public static void main(String[] args) {
         try {
-            Serveocu servidor = new Serveocu(5000);
+            Servidor servidor = new Servidor(5000);
             servidor.waitForClients();
         } catch (Exception e) {
             System.out.println("Erro:");

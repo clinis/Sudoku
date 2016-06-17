@@ -31,7 +31,7 @@ class Quadradinho extends JPanel {
         setVisible(true);
     }
 
-    Quadradinho(int line, int col){//}, String[] jogo, ArrayList<Quadradinho> cels) {
+    Quadradinho(int line, int col, ArrayList<Quadradinho> cels){
         this();
 
         qt.addMouseListener(new MouseAdapter() {

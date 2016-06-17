@@ -13,28 +13,25 @@ import java.io.*;
 
 class Sudoku extends JFrame implements Serializable{
     /** Array com todas as células da grelha principal do jogo */
-    final ArrayList<Quadradinho> cels;
+    ArrayList<Quadradinho> cels = null;
     /** Variável usada para contar quantos números o jogador já acertou */
     public int certos = 0;
     /** Variável que conta quantas dicas o jogador ainda pode usar (do botão de Dicas)*/
     int dicasRestantes = 5;
-    /** Puzzle do jogo escolhido */
-    private final String[] jogoPuzzle;
 
     JButton bVerificar = new JButton("Verificar resposta"),
             bDica = new JButton("Dica ("+dicasRestantes+")");
     JTextArea tempo = new JTextArea("Time :");
 
-    Sudoku(String[] puzul) throws IOException {
+    Sudoku(String[] jogoPuzzle) throws IOException {
         setTitle("Sudoku");
         setSize(500, 500);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        jogoPuzzle = puzul;
         cels = new ArrayList<Quadradinho>();
 
-        add(desenhaGrelha(cels), BorderLayout.CENTER);
+        add(desenhaGrelha(cels, jogoPuzzle), BorderLayout.CENTER);
 
         JPanel panelInferior = new JPanel();
         tempo.setEditable(false);
@@ -51,28 +48,36 @@ class Sudoku extends JFrame implements Serializable{
         //setVisible(true);
     }
 
-    private JPanel desenhaGrelha(ArrayList<Quadradinho> qe) {
+    Sudoku(String[] jogoSolucao, int cliente) {
+        JFrame janelaSolucao = new JFrame("Solução do Cliente "+cliente);
+        janelaSolucao.setSize(450, 450);
+        janelaSolucao.add(desenhaGrelha(new ArrayList<Quadradinho>(),jogoSolucao));
+        janelaSolucao.setVisible(true);
+        janelaSolucao.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent we) {
+                janelaSolucao.dispose();
+            }
+        });
+    }
+
+    public JPanel desenhaGrelha(ArrayList<Quadradinho> qe, String[] jogo) {
         JPanel grelha = new JPanel(new GridLayout(9, 9));
 
         for (int line = 0; line < 9; line++) {
             for (int col = 0; col < 9; col++) {
-                qe.add(new Quadradinho(line, col));//, jogoPuzzle, cels));
+                qe.add(new Quadradinho(line, col, cels));
                 desenhaRegioes(qe.get(col+line*9), line, col);
                 grelha.add(qe.get(col+line*9));
-            }
-        }
-        for (int line = 0; line < 9; line++) {
-            for (int col = 0; col < 9; col++) {
-                if (String.valueOf(jogoPuzzle[line].charAt(col)).equals(".")) {
+
+                if (String.valueOf(jogo[line].charAt(col)).equals(".")) {
                     qe.get(col+line*9).qt.setText(" ");
                 } else {
-                    qe.get(col+line*9).qt.setText(String.valueOf(jogoPuzzle[line].charAt(col)));
+                    qe.get(col+line*9).qt.setText(String.valueOf(jogo[line].charAt(col)));
                     qe.get(col+line*9).qt.setBackground(Color.YELLOW);
                     qe.get(col+line*9).editavel = false;
                 }
             }
         }
-
         return grelha;
     }
 

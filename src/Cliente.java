@@ -48,7 +48,7 @@ public class Cliente extends JApplet {
         } catch (Exception er) {
             System.err.println(er.getMessage());
         }
-        System.out.println(meuclient);
+        System.out.println("Sou o cliente "+meuclient);
 
         try{
             game = new Protocolo();
@@ -65,7 +65,7 @@ public class Cliente extends JApplet {
                 }catch (IOException er) {
                     System.err.println(er.getMessage());
                 }
-                System.out.println("Sandokan");
+                System.out.println("Sudokan");
 
                 novaJanela.bVerificar.addMouseListener(new MouseAdapter() {
                     public void mouseClicked(MouseEvent e) {
@@ -152,6 +152,7 @@ public class Cliente extends JApplet {
                         }
                     }
                 });
+
                 novaJanela.setVisible(true);
 
 
@@ -177,11 +178,11 @@ public class Cliente extends JApplet {
                     while(presentSec >= 60)
                         presentSec = presentSec - 60;
                     if(presentSec<10) {
-                        novaJanela.tempo.setText("Time : "+(int) elapsedTimeMin+":0"+(int) presentSec);
-                        System.out.println("Time - "+(int) elapsedTimeMin+":0"+(int) presentSec);
+                        novaJanela.tempo.setText("Tempo: "+(int) elapsedTimeMin+":0"+(int) presentSec);
+                        System.out.println("T: "+(int) elapsedTimeMin+":0"+(int) presentSec);
                     } else {
-                        novaJanela.tempo.setText("Time : "+(int) elapsedTimeMin+":"+(int) presentSec);
-                        System.out.println("Time - "+(int) elapsedTimeMin+":"+(int) presentSec);
+                        novaJanela.tempo.setText("Tempo: "+(int) elapsedTimeMin+":"+(int) presentSec);
+                        System.out.println("T: "+(int) elapsedTimeMin+":"+(int) presentSec);
                     }
                 } while(novaJanela.certos != 81);
                        /*      try{
