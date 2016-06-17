@@ -73,7 +73,7 @@ public class Servidor {
 
                             System.out.println("Cliente "+meuclient+" com jogo atribuido. Solução:");
                             //obter.imprimirSolucao(jogo);
-                            new Sudoku(jogoSolucao, meuclient);
+                            ///new Sudoku(jogoSolucao, meuclient);
                         } catch (Exception er) {
                             System.err.println(er.getMessage());
                         }

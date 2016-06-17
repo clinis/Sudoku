@@ -40,11 +40,11 @@ class Sudoku extends JFrame implements Serializable{
         panelInferior.add(bDica);
         add(panelInferior, BorderLayout.PAGE_END);
 
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent we) {
-                dispose();
-            }
-        });
+//        addWindowListener(new WindowAdapter() {
+//            public void windowClosing(WindowEvent we) {
+//                dispose();
+//            }
+//        });
         //setVisible(true);
     }
 

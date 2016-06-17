@@ -152,6 +152,17 @@ public class Cliente extends JApplet {
                         }
                     }
                 });
+                novaJanela.addWindowListener(new WindowAdapter() {
+                    public void windowClosing(WindowEvent we) {
+                        try {
+                            client.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        //novaJanela.dispose();
+                        System.exit(1);
+                    }
+                });
 
                 novaJanela.setVisible(true);
 
