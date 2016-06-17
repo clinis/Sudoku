@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="asApplet" type="Applet" factoryName="Applet">
+  <configuration default="false" name="Cliente (Applet)" type="Applet" factoryName="Applet">
     <option name="HTML_USED" value="true" />
     <option name="MAIN_CLASS_NAME" value="TestApplet" />
     <option name="HTML_FILE_NAME" value="$PROJECT_DIR$/res/a.html" />

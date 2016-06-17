@@ -12,19 +12,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import javax.swing.*;
 
-/**
- * <h1>Classe com as características de cada célula</h1>
- * Cada célula é uma JPanel com um JTextArea não editável pelo utilizador no seu interior.<br>
- * Cada célula tem uma variável que indica se o número na célula pode ser mudado no decorrer
- * do jogo (i.e., se é uma célula para o jogador preencher).<br>
- * Esta Classe tem dois construtores:
- * <ul>
- *     <li>Um para células sem eventos (e.g. grelha da janela Solução).</li>
- *     <li>Um para células com eventos (e.g. grelha da janela principal do jogo).</li>
- * </ul>
- * Os eventos das células são KeyListeners às teclas pressionadas pelo jogador, nomeadamente, os
- * números de 0 a 9 para colocação na grelha e algumas letras para certas funções.
- */
 class Quadradinho extends JPanel {
     /** Varíavel booleana que indica se o número na célula pode ser mudado no decorrer do jogo
      * (i.e., se é uma célula para o utilizador preencher) */
@@ -32,11 +19,6 @@ class Quadradinho extends JPanel {
     /** JTextArea não editável pelo utilizador e que mostra o número da célula */
     public final JTextArea qt;
 
-    /**
-     * Construtor para células <b>sem eventos</b><br>
-     * <i>e.g. grelha da Janela Solução</i><br>
-     * Define as margens da célula, adiciona um JTextArea, define um estilo para as letras e coloca a célula visivel.
-     */
     Quadradinho() {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -45,33 +27,11 @@ class Quadradinho extends JPanel {
         qt.setEditable(false);
         qt.setFont(new Font("Verdana", Font.BOLD, 40));
         add(qt, BorderLayout.CENTER);
-        //qt.requestFocus();
 
         setVisible(true);
     }
 
-    /**
-     * Construtor para células <b>com eventos</b><br>
-     * <i>e.g. grelha da janela de jogo</i><br>
-     * Chama o construtor anterior e adiciona Eventos ao JTextField qt.<br>
-     * <ul>
-     *     <li>MouseListener: muda a cor de fundo da célula que o utilizador clicar com o rato para cinzento</li>
-     *     <li>KeyListener: teclas pressionadas pelo utilizador
-     *     <ul>
-     *          <li>1, 2, 3, 4, 5, 6, 7, 8, 9: muda o número da célula para o número pressionado pelo utilizador</li>
-     *          <li>Delete ou Backspace: elimina o número da célula</li>
-     *          <li>R: coloca o número certo na célula selecionada</li>
-     *          <li>H: coloca um número certo numa célula aleatória</li>
-     *     </ul></li>
-     * </ul>
-     * @param line linha da célula na grelha
-     * @param col coluna da célula na grelha
-     * @param jogo grelha em questão. Pode ser a grelha de Puzzle ou de Solução.
-     *             Necessário para fazer comparações na funções de R e H.
-     * @param cels número colocado pelo utilizador na célula em questão.
-     *             Necessário para fazer comparações na funções de R e H.
-     */
-    Quadradinho(int line, int col, String[] jogo, ArrayList<Quadradinho> cels) {
+    Quadradinho(int line, int col){//}, String[] jogo, ArrayList<Quadradinho> cels) {
         this();
 
         qt.addMouseListener(new MouseAdapter() {
@@ -99,30 +59,30 @@ class Quadradinho extends JPanel {
                         qt.setBackground(Color.WHITE);
                     }
                 }
-                if (tecla.equals("Delete") ||
-                    tecla.equals("Backspace") ||
+                if (tecla.equals("Delete")      ||
+                    tecla.equals("Backspace")   ||
                     tecla.equals("⌫")) {
                     if (editavel == true) {
                         qt.setText(" ");
                         qt.setBackground(Color.WHITE);
                     }
                 }
-                if (KeyEvent.getKeyText(e.getKeyCode()).equals("R")) {
-                    if (editavel == true) {
-                        qt.setText(String.valueOf(jogo[line].charAt(col)));
-                        qt.setBackground(Color.WHITE);
-                    }
-                }
-                if (KeyEvent.getKeyText(e.getKeyCode()).equals("H")) {
-                    if (editavel == true) {
-                        int r = (int)(Math.random() * 80);
-                        if (cels.get(r).editavel == true) {
-                            cels.get(r).qt.setText(String.valueOf(jogo[r/9].charAt(r%9)));
-                            cels.get(r).qt.setBackground(Color.WHITE);
-                        }
-                        qt.setBackground(Color.WHITE);
-                    }
-                }
+//                if (KeyEvent.getKeyText(e.getKeyCode()).equals("R")) {
+//                    if (editavel == true) {
+//                        qt.setText(String.valueOf(jogo[line].charAt(col)));
+//                        qt.setBackground(Color.WHITE);
+//                    }
+//                }
+//                if (KeyEvent.getKeyText(e.getKeyCode()).equals("H")) {
+//                    if (editavel == true) {
+//                        int r = (int)(Math.random() * 80);
+//                        if (cels.get(r).editavel == true) {
+//                            cels.get(r).qt.setText(String.valueOf(jogo[r/9].charAt(r%9)));
+//                            cels.get(r).qt.setBackground(Color.WHITE);
+//                        }
+//                        qt.setBackground(Color.WHITE);
+//                    }
+//                }
             }
         });
     }
