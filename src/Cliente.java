@@ -40,7 +40,7 @@ public class Cliente extends JApplet {
         } catch (Exception er) {
             System.err.println(er.getMessage());
         }
-
+        JOptionPane.showInputDialog("Insere o teu nome palhaço");
         try{
             game = new Protocolo();
             game = game.recebe(in);
@@ -160,7 +160,7 @@ public class Cliente extends JApplet {
                             e.printStackTrace();
                         }
                         //novaJanela.dispose();
-                        System.exit(1);
+                        System.exit(0);
                     }
                 });
 
