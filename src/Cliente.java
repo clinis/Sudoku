@@ -40,7 +40,12 @@ public class Cliente extends JApplet {
             System.err.println(er.getMessage());
         }
 
-        String sounome = JOptionPane.showInputDialog("Insira o seu nome");
+        String sounome = JOptionPane.showInputDialog(this,
+                                                    "Insira o seu nome para gravar a sua pontuação.\nCaso contrário, ficará registado como \"convidado\".",
+                                                    "Insira o seu nome",
+                                                    JOptionPane.QUESTION_MESSAGE);
+        if(sounome != null)
+            sounome = sounome.trim();
         try{
             controlo = new Protocolo();
             controlo.arg1 = sounome;

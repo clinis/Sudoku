@@ -1,3 +1,5 @@
+import highscores.HighscoreManager;
+
 import java.io.*;
 import java.net.*;
 import java.text.DateFormat;
@@ -47,6 +49,7 @@ public class Servidor {
         int clientecertos = 0,
             clientepontos = 0,
             desconto = 0;
+        HighscoreManager hm = new HighscoreManager();
 
         public Atendimento(Socket socket) {
             this.soquete = socket;
@@ -79,10 +82,11 @@ public class Servidor {
                     try {
                         controlo = new Protocolo();
                         controlo = controlo.recebe(in);
-                        clientenome =  controlo.arg1;
+                        clientenome =  (String) controlo.arg1;
                     } catch (Exception er) {
                         //System.err.println(er.getMessage());
                     }
+                    //System.out.print("\n\n---\n"+clientenome+"\n---\n\n");
                     if ( clientenome == null || ((String) clientenome).length() < 1){
                         clientenome = "Visitante";
                     }
@@ -138,7 +142,7 @@ public class Servidor {
                                         clientepontos = (clientecertos-desconto-(dicasIniciais-dicasRestantes)); // pontuacao = certos - os certos do puzzle - as dicas
                                         try {
                                             controlo = new Protocolo();
-                                            controlo.arg1 = clientecertos; // = 2;
+                                            controlo.arg1 = clientecertos;
                                             controlo.arg2 = clientepontos;
                                             controlo.envia(oos);
                                         } catch (Exception er) {
@@ -147,7 +151,7 @@ public class Servidor {
                                     } else {
                                         try {
                                             controlo = new Protocolo();
-                                            controlo.arg1 = -1; // = null;
+                                            controlo.arg1 = (int) -1;
                                             controlo.envia(oos);
                                         } catch (Exception er) {
                                             System.err.println(er.getMessage());
@@ -159,6 +163,12 @@ public class Servidor {
                             long elapsedTimeMillis = System.currentTimeMillis() - startTime;
                             DateFormat dateFormat = new SimpleDateFormat("mm:ss");
                             System.out.println("Cliente " + clientenum + " verificou aos: "+dateFormat.format(elapsedTimeMillis));
+
+                            if(clientecertos == 81){
+                                System.out.println("Cliente " + clientenum + " GANHOU aos: "+dateFormat.format(elapsedTimeMillis));
+                                hm.addScore((String)clientenome,elapsedTimeMillis);
+                                System.out.print(hm.getHighscoreString());
+                            }
                         }
                         if (botaotipo.equals("Dica")) {
                             System.out.println("Cliente " + clientenum + " pediu a dica " + (1 + dicasIniciais - dicasRestantes));
