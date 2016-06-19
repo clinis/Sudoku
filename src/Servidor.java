@@ -42,6 +42,7 @@ public class Servidor {
         int dicasRestantes = dicasIniciais;
         String[] jogoPuzzle = null;
         String[] jogoSolucao = null;
+        int jogoindex = 0;
         String jogo = null;
         InputStream ficheiroJogos = null;
         int clientenum = -1;
@@ -59,7 +60,8 @@ public class Servidor {
                 in = new ObjectInputStream(socket.getInputStream());
                 ficheiroJogos = new FileInputStream("./res/btest.csv");
                 obterJogo obter = new obterJogo();
-                jogo = obter.readLine(ficheiroJogos, obter.escolherJogoIndexAleatoriamente());
+                jogoindex = obter.escolherJogoIndexAleatoriamente();
+                jogo = obter.readLine(ficheiroJogos, jogoindex);
                 jogoPuzzle = obter.deLinhaPara9x9(obter.PuzzleOUSolucao(0, jogo));
                 jogoSolucao = obter.deLinhaPara9x9(obter.PuzzleOUSolucao(1, jogo));
                 for (int line = 0; line < 9; line++) {
@@ -166,7 +168,7 @@ public class Servidor {
 
                             if(clientecertos == 81){
                                 System.out.println("Cliente " + clientenum + " GANHOU aos: "+dateFormat.format(elapsedTimeMillis));
-                                hm.addScore((String)clientenome,elapsedTimeMillis);
+                                hm.addScore((String)clientenome,elapsedTimeMillis,jogoindex);
                                 System.out.print(hm.getHighscoreString());
                             }
                         }

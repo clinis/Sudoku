@@ -22,6 +22,7 @@ public class Cliente extends JApplet {
     Thread tempocliente = new Thread();
     private Socket ligacao;
     int soucliente = 0;
+    String sounome = null;
     private String[] jogoPuzzle;
     int r = 0;
 
@@ -40,10 +41,10 @@ public class Cliente extends JApplet {
             System.err.println(er.getMessage());
         }
 
-        String sounome = JOptionPane.showInputDialog(this,
-                                                    "Insira o seu nome para gravar a sua pontuação.\nCaso contrário, ficará registado como \"convidado\".",
-                                                    "Insira o seu nome",
-                                                    JOptionPane.QUESTION_MESSAGE);
+        sounome = JOptionPane.showInputDialog(this,
+                                             "Insira o seu nome para gravar a sua pontuação.\nCaso contrário, ficará registado como \"convidado\".",
+                                             "Insira o seu nome",
+                                             JOptionPane.QUESTION_MESSAGE);
         if(sounome != null)
             sounome = sounome.trim();
         try{
@@ -101,20 +102,20 @@ public class Cliente extends JApplet {
                         for (int col = 0; col < 9; col++) {
                             try{
                                 controlo = new Protocolo();
-                                controlo.arg1 = (String) janelaCliente.cels.get(col+line*9).qt.getText();
+                                controlo.arg1 = (String) janelaCliente.cels.get(col + line * 9).qt.getText();
                                 controlo.envia(out);
                             } catch (Exception er) {
                                 System.err.println(er.getMessage());
                             }
 
-                            try{
+                            try {
                                 controlo = new Protocolo();
                                 controlo = controlo.recebe(in);
                             } catch (Exception er) {
                                 System.err.println(er.getMessage());
                             }
-                            janelaCliente.cels.get(col+line*9).qt.setText((String) controlo.arg1);
-                            janelaCliente.cels.get(col+line*9).qt.setBackground(Color.WHITE);
+                            janelaCliente.cels.get(col + line * 9).qt.setText((String) controlo.arg1);
+                            janelaCliente.cels.get(col + line * 9).qt.setBackground(Color.WHITE);
                         }
                     }
                 }
@@ -127,14 +128,14 @@ public class Cliente extends JApplet {
             jogoDicas.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent arg0) {
                     dicas();
-                    if(janelaCliente.dicasRestantes == 0)
+                    if (janelaCliente.dicasRestantes == 0)
                         jogoDicas.setEnabled(false);
                 }
             });
             jogoHighscores.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent arg0) {
                     System.out.println("Testingggg Highscore");
-                    try{
+                    try {
                         controlo = new Protocolo();
                         controlo.arg1 = (String) "Highscores";
                         controlo.envia(out);
@@ -142,17 +143,17 @@ public class Cliente extends JApplet {
                         System.err.println(er.getMessage());
                     }
 
-                    try{
+                    try {
                         controlo = new Protocolo();
                         controlo = controlo.recebe(in);
                     } catch (Exception er) {
                         System.err.println(er.getMessage());
                     }
-                    System.out.println("Highscores: \n"+ controlo.arg1);
+                    System.out.println("Highscores: \n" + controlo.arg1);
                     JFrame janelaHighScores = new JFrame("Mestres do Sudoku");
                     JTextArea areaHighScores = new JTextArea();
                     areaHighScores.setEditable(false);
-                    areaHighScores.setText((String)controlo.arg1);
+                    areaHighScores.setText((String) controlo.arg1);
                     janelaHighScores.add(areaHighScores);
                     janelaHighScores.pack();
                     janelaHighScores.setVisible(true);
@@ -181,36 +182,12 @@ public class Cliente extends JApplet {
                 }
             });
 
-        }catch (IOException er) {
+        } catch (IOException er) {
             System.err.println(er.getMessage());
         }
         System.out.println("Sudokan");
 
         janelaCliente.setVisible(true);
-
-        tempocliente = new Thread(){
-            public void run() {
-
-                // Get current time
-                long startTime = System.currentTimeMillis();
-                do{
-                    try{
-                        sleep(1000);
-                    }catch (Exception er) {
-                        System.err.println(er.getMessage());
-                    }
-                    // Get elapsed time in milliseconds
-                    long elapsedTimeMillis = System.currentTimeMillis() - ( startTime - 5000 *(dicasIniciais- janelaCliente.dicasRestantes) ); // adiciona 5s por dica
-
-                    DateFormat dateFormat = new SimpleDateFormat("mm:ss");
-                    janelaCliente.tempo.setText(dateFormat.format(elapsedTimeMillis));
-                    //System.out.println("T: "+dateFormat.format(elapsedTimeMillis));
-                } while(janelaCliente.certos != 81);
-            }
-        };
-        if(!tempocliente.isAlive()) {
-            tempocliente.start();
-        }
     }
 
     void verificar(){
@@ -253,6 +230,9 @@ public class Cliente extends JApplet {
                 }
             }
             JOptionPane.showMessageDialog(getContentPane(), "Parabéns! Chegaste ao fim do jogo.","Parabéns!", JOptionPane.INFORMATION_MESSAGE);
+            if(true){
+                sair();
+            }
         } else {
             janelaCliente.certos = 0;
         }

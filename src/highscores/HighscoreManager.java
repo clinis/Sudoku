@@ -32,9 +32,9 @@ public class HighscoreManager {
         ScoreComparator comparator = new ScoreComparator();
         Collections.sort(scores, comparator);
     }
-    public void addScore(String name, long score) {
+    public void addScore(String name, long score, int puzzle) {
         loadScoreFile();
-        scores.add(new Score(name, score));
+        scores.add(new Score(name, score, puzzle));
         updateScoreFile();
         writeScoreTextFile();
     }
@@ -104,7 +104,7 @@ public class HighscoreManager {
         while (i < x) {
             //highscoreString += (i + 1) + ".\t" + scores.get(i).getNome() + "\t\t" + scores.get(i).getTempo() + "\n";
             DateFormat dateFormat = new SimpleDateFormat("mm:ss");
-            highscoreString += (i + 1) + ".\t" + scores.get(i).getNome() + "\t\t" + dateFormat.format(scores.get(i).getTempo()) + "\n";
+            highscoreString += (i + 1) + ".\t" + dateFormat.format(scores.get(i).getTempo()) + "\t" + scores.get(i).getPuzzle() + "\t" + scores.get(i).getNome() + "\n";
             i++;
         }
         return highscoreString;
