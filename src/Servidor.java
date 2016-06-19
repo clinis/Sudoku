@@ -192,10 +192,10 @@ public class Servidor {
                                 System.err.println(er.getMessage());
                             }
                         }
-                        if (botaotipo.equals("High")) {
+                        if (botaotipo.equals("Highscores")) {
                             try{
                                 controlo = new Protocolo();
-                                controlo.arg1 = (int) clientepontos;
+                                controlo.arg1 = hm.getHighscoreString();
                                 controlo.envia(oos);
                             } catch (Exception er) {
                                 System.err.println(er.getMessage());

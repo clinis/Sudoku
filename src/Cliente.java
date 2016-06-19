@@ -18,7 +18,7 @@ public class Cliente extends JApplet {
     private Protocolo controlo = new Protocolo();
     private ObjectInputStream in;
     private ObjectOutputStream out;
-    Sudoku novaJanela;
+    Sudoku janelaCliente;
     Thread tempocliente = new Thread();
     private Socket ligacao;
     int soucliente = 0;
@@ -64,7 +64,7 @@ public class Cliente extends JApplet {
         }
         System.out.println("Sou o cliente "+ soucliente);
         try{
-            novaJanela = new Sudoku(jogoPuzzle);
+            janelaCliente = new Sudoku(jogoPuzzle);
 
             // Creates a menubar for a JFrame
             JMenuBar menuBar = new JMenuBar();
@@ -101,7 +101,7 @@ public class Cliente extends JApplet {
                         for (int col = 0; col < 9; col++) {
                             try{
                                 controlo = new Protocolo();
-                                controlo.arg1 = (String) novaJanela.cels.get(col+line*9).qt.getText();
+                                controlo.arg1 = (String) janelaCliente.cels.get(col+line*9).qt.getText();
                                 controlo.envia(out);
                             } catch (Exception er) {
                                 System.err.println(er.getMessage());
@@ -113,8 +113,8 @@ public class Cliente extends JApplet {
                             } catch (Exception er) {
                                 System.err.println(er.getMessage());
                             }
-                            novaJanela.cels.get(col+line*9).qt.setText((String) controlo.arg1);
-                            novaJanela.cels.get(col+line*9).qt.setBackground(Color.WHITE);
+                            janelaCliente.cels.get(col+line*9).qt.setText((String) controlo.arg1);
+                            janelaCliente.cels.get(col+line*9).qt.setBackground(Color.WHITE);
                         }
                     }
                 }
@@ -127,7 +127,7 @@ public class Cliente extends JApplet {
             jogoDicas.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent arg0) {
                     dicas();
-                    if(novaJanela.dicasRestantes == 0)
+                    if(janelaCliente.dicasRestantes == 0)
                         jogoDicas.setEnabled(false);
                 }
             });
@@ -136,7 +136,7 @@ public class Cliente extends JApplet {
                     System.out.println("Testingggg Highscore");
                     try{
                         controlo = new Protocolo();
-                        controlo.arg1 = (String) "High";
+                        controlo.arg1 = (String) "Highscores";
                         controlo.envia(out);
                     } catch (Exception er) {
                         System.err.println(er.getMessage());
@@ -148,7 +148,14 @@ public class Cliente extends JApplet {
                     } catch (Exception er) {
                         System.err.println(er.getMessage());
                     }
-                    System.out.println("Pontos: "+(int) controlo.arg1);
+                    System.out.println("Highscores: \n"+ controlo.arg1);
+                    JFrame janelaHighScores = new JFrame("Mestres do Sudoku");
+                    JTextArea areaHighScores = new JTextArea();
+                    areaHighScores.setEditable(false);
+                    areaHighScores.setText((String)controlo.arg1);
+                    janelaHighScores.add(areaHighScores);
+                    janelaHighScores.pack();
+                    janelaHighScores.setVisible(true);
                 }
             });
             sairSair.addActionListener(new ActionListener() {
@@ -156,19 +163,19 @@ public class Cliente extends JApplet {
                     sair();
                 }
             });
-            novaJanela.add(menuBar, BorderLayout.NORTH);
+            janelaCliente.add(menuBar, BorderLayout.NORTH);
 
-            novaJanela.bVerificar.addMouseListener(new MouseAdapter() {
+            janelaCliente.bVerificar.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     verificar();
                 }
             });
-            novaJanela.bDica.addMouseListener(new MouseAdapter() {
+            janelaCliente.bDica.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     dicas();
                 }
             });
-            novaJanela.addWindowListener(new WindowAdapter() {
+            janelaCliente.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent we) {
                     sair();
                 }
@@ -179,7 +186,7 @@ public class Cliente extends JApplet {
         }
         System.out.println("Sudokan");
 
-        novaJanela.setVisible(true);
+        janelaCliente.setVisible(true);
 
         tempocliente = new Thread(){
             public void run() {
@@ -193,12 +200,12 @@ public class Cliente extends JApplet {
                         System.err.println(er.getMessage());
                     }
                     // Get elapsed time in milliseconds
-                    long elapsedTimeMillis = System.currentTimeMillis() - ( startTime - 5000 *(dicasIniciais-novaJanela.dicasRestantes) ); // adiciona 5s por dica
+                    long elapsedTimeMillis = System.currentTimeMillis() - ( startTime - 5000 *(dicasIniciais- janelaCliente.dicasRestantes) ); // adiciona 5s por dica
 
                     DateFormat dateFormat = new SimpleDateFormat("mm:ss");
-                    novaJanela.tempo.setText(dateFormat.format(elapsedTimeMillis));
+                    janelaCliente.tempo.setText(dateFormat.format(elapsedTimeMillis));
                     //System.out.println("T: "+dateFormat.format(elapsedTimeMillis));
-                } while(novaJanela.certos != 81);
+                } while(janelaCliente.certos != 81);
             }
         };
         if(!tempocliente.isAlive()) {
@@ -218,7 +225,7 @@ public class Cliente extends JApplet {
             for (int col = 0; col < 9; col++) {
                 try{
                     controlo = new Protocolo();
-                    controlo.arg1 = (String) novaJanela.cels.get(col+line*9).qt.getText();
+                    controlo.arg1 = (String) janelaCliente.cels.get(col+line*9).qt.getText();
                     controlo.envia(out);
                 } catch (Exception er) {
                     System.err.println(er.getMessage());
@@ -231,28 +238,28 @@ public class Cliente extends JApplet {
                     System.err.println(er.getMessage());
                 }
                 if( (int)controlo.arg1 == -1) {
-                    novaJanela.cels.get(col + line * 9).qt.setBackground(Color.RED);
+                    janelaCliente.cels.get(col + line * 9).qt.setBackground(Color.RED);
                     repaint();
                 } else{
-                    novaJanela.certos = (int)controlo.arg1;
-                    novaJanela.pontuacao.setText("Pontos: "+controlo.arg2.toString() );
+                    janelaCliente.certos = (int)controlo.arg1;
+                    janelaCliente.pontuacao.setText("Pontos: "+controlo.arg2.toString() );
                 }
             }
         }
-        if (novaJanela.certos == 81) {
+        if (janelaCliente.certos == 81) {
             for (int line = 0; line < 9; line++) {
                 for (int col = 0; col < 9; col++) {
-                    novaJanela.cels.get(col+line*9).qt.setBackground(Color.GREEN);
+                    janelaCliente.cels.get(col+line*9).qt.setBackground(Color.GREEN);
                 }
             }
             JOptionPane.showMessageDialog(getContentPane(), "Parabéns! Chegaste ao fim do jogo.","Parabéns!", JOptionPane.INFORMATION_MESSAGE);
         } else {
-            novaJanela.certos = 0;
+            janelaCliente.certos = 0;
         }
     }
 
     void dicas(){
-        if (novaJanela.dicasRestantes > 0) {
+        if (janelaCliente.dicasRestantes > 0) {
             try{
                 controlo = new Protocolo();
                 controlo.arg1 = (String) "Dica";
@@ -263,7 +270,7 @@ public class Cliente extends JApplet {
             int r;
             do {
                 r = (int)(Math.random() * 80);
-            } while (novaJanela.cels.get(r).editavel == false);
+            } while (janelaCliente.cels.get(r).editavel == false);
             try{
                 controlo = new Protocolo();
                 controlo.arg1 = (int) r;
@@ -277,14 +284,14 @@ public class Cliente extends JApplet {
             } catch (Exception er) {
                 System.err.println(er.getMessage());
             }
-            novaJanela.cels.get(r).qt.setText((String) controlo.arg1);
-            novaJanela.cels.get(r).qt.setBackground(Color.WHITE);
+            janelaCliente.cels.get(r).qt.setText((String) controlo.arg1);
+            janelaCliente.cels.get(r).qt.setBackground(Color.WHITE);
 
-            novaJanela.dicasRestantes = (int) controlo.arg2;
-            novaJanela.bDica.setText("Dica ("+novaJanela.dicasRestantes+")");
+            janelaCliente.dicasRestantes = (int) controlo.arg2;
+            janelaCliente.bDica.setText("Dica ("+ janelaCliente.dicasRestantes+")");
         }
-        if (novaJanela.dicasRestantes == 0) {
-            novaJanela.bDica.setEnabled(false);
+        if (janelaCliente.dicasRestantes == 0) {
+            janelaCliente.bDica.setEnabled(false);
         }
     }
 
@@ -294,7 +301,7 @@ public class Cliente extends JApplet {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //novaJanela.dispose();
+        //janelaCliente.dispose();
         System.exit(1);
     }
 }
