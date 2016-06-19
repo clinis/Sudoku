@@ -12,9 +12,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 public class Cliente extends JApplet {
+    private final int dicasIniciais = Servidor.dicasIniciais;
     private Protocolo controlo = new Protocolo();
     private ObjectInputStream in;
     private ObjectOutputStream out;
@@ -23,6 +23,7 @@ public class Cliente extends JApplet {
     private Socket ligacao;
     int soucliente = 0;
     private String[] jogoPuzzle;
+    int r = 0;
 
 
     public static void main(String args[]) {
@@ -59,19 +60,115 @@ public class Cliente extends JApplet {
         System.out.println("Sou o cliente "+ soucliente);
         try{
             novaJanela = new Sudoku(jogoPuzzle);
-            novaJanela.bVerificar.addMouseListener(new trataVerificar());
-            novaJanela.bDica.addMouseListener(new trataDicas());
-            novaJanela.addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent we) {
-                    try {
-                        ligacao.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+
+            // Creates a menubar for a JFrame
+            JMenuBar menuBar = new JMenuBar();
+            // Add the menubar to the frame
+            setJMenuBar(menuBar);
+            // Define and add two drop down menu to the menubar
+            JMenu debugMenu = new JMenu("Debug");
+            JMenu jogoMenu = new JMenu("Jogo");
+            JMenu exitMenu = new JMenu("Sair");
+            menuBar.add(debugMenu);
+            menuBar.add(jogoMenu);
+            menuBar.add(exitMenu);
+            // Create and add simple menu item to one of the drop down menu
+            JMenuItem debugPreencherTudo = new JMenuItem("Preencher Tudo");
+            JMenuItem jogoHighscores = new JMenuItem("Highscores");
+            JMenuItem jogoVerificar = new JMenuItem("Verificar");
+            JMenuItem jogoDicas = new JMenuItem("Dicas");
+            JMenuItem sairSair = new JMenuItem("Sair");
+            debugMenu.add(debugPreencherTudo);
+            jogoMenu.add(jogoHighscores);
+            jogoMenu.add(jogoVerificar);
+            jogoMenu.add(jogoDicas);
+            exitMenu.add(sairSair);
+            debugPreencherTudo.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent arg0) {
+                    try{
+                        controlo = new Protocolo();
+                        controlo.arg1 = (String) "Dbug:preencher";
+                        controlo.envia(out);
+                    } catch (Exception er) {
+                        System.err.println(er.getMessage());
                     }
-                    //novaJanela.dispose();
-                    System.exit(0);
+                    for (int line = 0; line < 9; line++) {
+                        for (int col = 0; col < 9; col++) {
+                            try{
+                                controlo = new Protocolo();
+                                controlo.arg1 = (String) novaJanela.cels.get(col+line*9).qt.getText();
+                                controlo.envia(out);
+                            } catch (Exception er) {
+                                System.err.println(er.getMessage());
+                            }
+
+                            try{
+                                controlo = new Protocolo();
+                                controlo = controlo.recebe(in);
+                            } catch (Exception er) {
+                                System.err.println(er.getMessage());
+                            }
+                            novaJanela.cels.get(col+line*9).qt.setText((String) controlo.arg1);
+                            novaJanela.cels.get(col+line*9).qt.setBackground(Color.WHITE);
+                        }
+                    }
                 }
             });
+            jogoVerificar.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent arg0) {
+                    verificar();
+                }
+            });
+            jogoDicas.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent arg0) {
+                    dicas();
+                    if(novaJanela.dicasRestantes == 0)
+                        jogoDicas.setEnabled(false);
+                }
+            });
+            jogoHighscores.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent arg0) {
+                    System.out.println("Testingggg Highscore");
+                    try{
+                        controlo = new Protocolo();
+                        controlo.arg1 = (String) "High";
+                        controlo.envia(out);
+                    } catch (Exception er) {
+                        System.err.println(er.getMessage());
+                    }
+
+                    try{
+                        controlo = new Protocolo();
+                        controlo = controlo.recebe(in);
+                    } catch (Exception er) {
+                        System.err.println(er.getMessage());
+                    }
+                    System.out.println("Pontos: "+(int) controlo.arg1);
+                }
+            });
+            sairSair.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent arg0) {
+                    sair();
+                }
+            });
+            novaJanela.add(menuBar, BorderLayout.NORTH);
+
+            novaJanela.bVerificar.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent e) {
+                    verificar();
+                }
+            });
+            novaJanela.bDica.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent e) {
+                    dicas();
+                }
+            });
+            novaJanela.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent we) {
+                    sair();
+                }
+            });
+
         }catch (IOException er) {
             System.err.println(er.getMessage());
         }
@@ -91,7 +188,7 @@ public class Cliente extends JApplet {
                         System.err.println(er.getMessage());
                     }
                     // Get elapsed time in milliseconds
-                    long elapsedTimeMillis = System.currentTimeMillis() - ( startTime - 5000 *(5-novaJanela.dicasRestantes) ); // adiciona 5s por dica
+                    long elapsedTimeMillis = System.currentTimeMillis() - ( startTime - 5000 *(dicasIniciais-novaJanela.dicasRestantes) ); // adiciona 5s por dica
 
                     DateFormat dateFormat = new SimpleDateFormat("mm:ss");
                     novaJanela.tempo.setText(dateFormat.format(elapsedTimeMillis));
@@ -104,87 +201,95 @@ public class Cliente extends JApplet {
         }
     }
 
-    class trataVerificar extends MouseAdapter {
-        public void mouseClicked(MouseEvent e) {
-            try{
-                controlo = new Protocolo();
-                controlo.arg1 = (String) "Verifica";
-                controlo.envia(out);
-            } catch (Exception er) {
-                System.err.println(er.getMessage());
-            }
-            for (int line = 0; line < 9; line++) {
-                for (int col = 0; col < 9; col++) {
-                    try{
-                        controlo = new Protocolo();
-                        controlo.arg1 = (String) novaJanela.cels.get(col+line*9).qt.getText();
-                        controlo.envia(out);
-                    } catch (Exception er) {
-                        System.err.println(er.getMessage());
-                    }
-
-                    try{
-                        controlo = new Protocolo();
-                        controlo = controlo.recebe(in);
-                    } catch (Exception er) {
-                        System.err.println(er.getMessage());
-                    }
-                    if(controlo.arg1 == "certo")
-                        novaJanela.certos++;
-                    else
-                        novaJanela.cels.get(col+line*9).qt.setBackground(Color.RED);
-                    repaint();
-                }
-            }
-            if (novaJanela.certos == 81) {
-                for (int line = 0; line < 9; line++) {
-                    for (int col = 0; col < 9; col++) {
-                        novaJanela.cels.get(col+line*9).qt.setBackground(Color.GREEN);
-                    }
-                }
-                JOptionPane.showMessageDialog(getContentPane(), "Parabéns! Chegaste ao fim do jogo.","Parabéns!", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                novaJanela.certos = 0;
-            }
+    void verificar(){
+        try{
+            controlo = new Protocolo();
+            controlo.arg1 = (String) "Verifica";
+            controlo.envia(out);
+        } catch (Exception er) {
+            System.err.println(er.getMessage());
         }
-    }
+        for (int line = 0; line < 9; line++) {
+            for (int col = 0; col < 9; col++) {
+                try{
+                    controlo = new Protocolo();
+                    controlo.arg1 = (String) novaJanela.cels.get(col+line*9).qt.getText();
+                    controlo.envia(out);
+                } catch (Exception er) {
+                    System.err.println(er.getMessage());
+                }
 
-    class trataDicas extends MouseAdapter{
-        public void mouseClicked(MouseEvent e) {
-            if (novaJanela.dicasRestantes > 0) {
-                try{
-                    controlo = new Protocolo();
-                    controlo.arg1 = (String) "Dica";
-                    controlo.envia(out);
-                } catch (Exception er) {
-                    System.err.println(er.getMessage());
-                }
-                int r;
-                do {
-                    r = (int)(Math.random() * 80);
-                } while (novaJanela.cels.get(r).editavel == false);
-                try{
-                    controlo = new Protocolo();
-                    controlo.arg1 = (int) r;
-                    controlo.envia(out);
-                } catch (Exception er) {
-                    System.err.println(er.getMessage());
-                }
                 try{
                     controlo = new Protocolo();
                     controlo = controlo.recebe(in);
                 } catch (Exception er) {
                     System.err.println(er.getMessage());
                 }
-                novaJanela.cels.get(r).qt.setText((String) controlo.arg1);
-                novaJanela.cels.get(r).qt.setBackground(Color.WHITE);
-
-                novaJanela.dicasRestantes = (int) controlo.arg2;
-                novaJanela.bDica.setText("Dica ("+novaJanela.dicasRestantes+")");
-            }
-            if (novaJanela.dicasRestantes == 0) {
-                novaJanela.bDica.setEnabled(false);
+                if( (int)controlo.arg1 == -1) {
+                    novaJanela.cels.get(col + line * 9).qt.setBackground(Color.RED);
+                    repaint();
+                } else{
+                    novaJanela.certos = (int)controlo.arg1;
+                    novaJanela.pontuacao.setText("Pontos: "+controlo.arg2.toString() );
+                }
             }
         }
+        if (novaJanela.certos == 81) {
+            for (int line = 0; line < 9; line++) {
+                for (int col = 0; col < 9; col++) {
+                    novaJanela.cels.get(col+line*9).qt.setBackground(Color.GREEN);
+                }
+            }
+            JOptionPane.showMessageDialog(getContentPane(), "Parabéns! Chegaste ao fim do jogo.","Parabéns!", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            novaJanela.certos = 0;
+        }
+    }
+
+    void dicas(){
+        if (novaJanela.dicasRestantes > 0) {
+            try{
+                controlo = new Protocolo();
+                controlo.arg1 = (String) "Dica";
+                controlo.envia(out);
+            } catch (Exception er) {
+                System.err.println(er.getMessage());
+            }
+            int r;
+            do {
+                r = (int)(Math.random() * 80);
+            } while (novaJanela.cels.get(r).editavel == false);
+            try{
+                controlo = new Protocolo();
+                controlo.arg1 = (int) r;
+                controlo.envia(out);
+            } catch (Exception er) {
+                System.err.println(er.getMessage());
+            }
+            try{
+                controlo = new Protocolo();
+                controlo = controlo.recebe(in);
+            } catch (Exception er) {
+                System.err.println(er.getMessage());
+            }
+            novaJanela.cels.get(r).qt.setText((String) controlo.arg1);
+            novaJanela.cels.get(r).qt.setBackground(Color.WHITE);
+
+            novaJanela.dicasRestantes = (int) controlo.arg2;
+            novaJanela.bDica.setText("Dica ("+novaJanela.dicasRestantes+")");
+        }
+        if (novaJanela.dicasRestantes == 0) {
+            novaJanela.bDica.setEnabled(false);
+        }
+    }
+
+    void sair(){
+        try {
+            ligacao.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //novaJanela.dispose();
+        System.exit(1);
     }
 }

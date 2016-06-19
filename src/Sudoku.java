@@ -12,16 +12,18 @@ import java.io.IOException;
 import java.io.*;
 
 class Sudoku extends JFrame implements Serializable{
+    private final int dicasIniciais = Servidor.dicasIniciais;
     /** Array com todas as células da grelha principal do jogo */
     ArrayList<Quadradinho> cels = null;
     /** Variável usada para contar quantos números o jogador já acertou */
     public int certos = 0;
     /** Variável que conta quantas dicas o jogador ainda pode usar (do botão de Dicas)*/
-    int dicasRestantes = 5;
+    int dicasRestantes = dicasIniciais;
 
     JButton bVerificar = new JButton("Verificar resposta"),
             bDica = new JButton("Dica ("+dicasRestantes+")");
-    JTextArea tempo = new JTextArea("Time :");
+    JTextArea tempo = new JTextArea("Time: "),
+              pontuacao = new JTextArea("Pontos: ");
 
     Sudoku(String[] jogoPuzzle) throws IOException {
         setTitle("Sudoku");
@@ -35,9 +37,11 @@ class Sudoku extends JFrame implements Serializable{
 
         JPanel panelInferior = new JPanel();
         tempo.setEditable(false);
+        pontuacao.setEditable(false);
         panelInferior.add(tempo);
         panelInferior.add(bVerificar);
         panelInferior.add(bDica);
+        panelInferior.add(pontuacao);
         add(panelInferior, BorderLayout.PAGE_END);
 
 //        addWindowListener(new WindowAdapter() {

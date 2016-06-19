@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 
 public class Servidor {
     protected final int DIM = 5;
+    public static final int dicasIniciais = 5;
     protected ServerSocket SocketEscuta;
 
     public Servidor() {
@@ -36,13 +37,16 @@ public class Servidor {
         ObjectInputStream in = null;
 
         Protocolo controlo = new Protocolo();
-        int dicasRestantes = 5;
+        int dicasRestantes = dicasIniciais;
         String[] jogoPuzzle = null;
         String[] jogoSolucao = null;
         String jogo = null;
         InputStream ficheiroJogos = null;
         int clientenum = -1;
         Object clientenome;
+        int clientecertos = 0,
+            clientepontos = 0,
+            desconto = 0;
 
         public Atendimento(Socket socket) {
             this.soquete = socket;
@@ -55,6 +59,14 @@ public class Servidor {
                 jogo = obter.readLine(ficheiroJogos, obter.escolherJogoIndexAleatoriamente());
                 jogoPuzzle = obter.deLinhaPara9x9(obter.PuzzleOUSolucao(0, jogo));
                 jogoSolucao = obter.deLinhaPara9x9(obter.PuzzleOUSolucao(1, jogo));
+                for (int line = 0; line < 9; line++) {
+                    for (int col = 0; col < 9; col++) {
+                        if (String.valueOf(jogoPuzzle[line].charAt(col)).equals(String.valueOf(jogoSolucao[line].charAt(col)))) {
+                            desconto++;
+                        }
+                    }
+                }
+                clientepontos = 0-desconto;
             } catch (IOException e) {
                 System.out.println(e.getMessage());
             }
@@ -71,10 +83,8 @@ public class Servidor {
                     } catch (Exception er) {
                         //System.err.println(er.getMessage());
                     }
-                    System.out.println(clientenome);
                     if ( clientenome == null || ((String) clientenome).length() < 1){
                         clientenome = "Visitante";
-                        System.out.println(clientenome);
                     }
                     System.out.println("Cliente "+clientenum+" com jogador "+clientenome);
 
@@ -112,6 +122,7 @@ public class Servidor {
                         }
                         String botaotipo = (String) controlo.arg1;
                         if (botaotipo.equals("Verifica")) {
+                            clientecertos = 0;
                             for (int line = 0; line < 9; line++) {
                                 for (int col = 0; col < 9; col++) {
                                     try {
@@ -123,9 +134,12 @@ public class Servidor {
                                     String celulaAVerificar = (String) controlo.arg1;
 
                                     if (celulaAVerificar.equals(String.valueOf(jogoSolucao[line].charAt(col)))) {
+                                        clientecertos++;
+                                        clientepontos = (clientecertos-desconto-(dicasIniciais-dicasRestantes)); // pontuacao = certos - os certos do puzzle - as dicas
                                         try {
                                             controlo = new Protocolo();
-                                            controlo.arg1 = "certo";
+                                            controlo.arg1 = clientecertos; // = 2;
+                                            controlo.arg2 = clientepontos;
                                             controlo.envia(oos);
                                         } catch (Exception er) {
                                             System.err.println(er.getMessage());
@@ -133,7 +147,7 @@ public class Servidor {
                                     } else {
                                         try {
                                             controlo = new Protocolo();
-                                            controlo.arg1 = "errado";
+                                            controlo.arg1 = -1; // = null;
                                             controlo.envia(oos);
                                         } catch (Exception er) {
                                             System.err.println(er.getMessage());
@@ -147,7 +161,7 @@ public class Servidor {
                             System.out.println("Cliente " + clientenum + " verificou aos: "+dateFormat.format(elapsedTimeMillis));
                         }
                         if (botaotipo.equals("Dica")) {
-                            System.out.println("Cliente " + clientenum + " pediu a dica " + (5 - dicasRestantes));
+                            System.out.println("Cliente " + clientenum + " pediu a dica " + (1 + dicasIniciais - dicasRestantes));
                             try {
                                 controlo = new Protocolo();
                                 controlo = controlo.recebe(in);
@@ -166,6 +180,34 @@ public class Servidor {
                                 controlo.envia(oos);
                             } catch (Exception er) {
                                 System.err.println(er.getMessage());
+                            }
+                        }
+                        if (botaotipo.equals("High")) {
+                            try{
+                                controlo = new Protocolo();
+                                controlo.arg1 = (int) clientepontos;
+                                controlo.envia(oos);
+                            } catch (Exception er) {
+                                System.err.println(er.getMessage());
+                            }
+                        }
+                        if (botaotipo.equals("Dbug:preencher")) {
+                            for (int line = 0; line < 9; line++) {
+                                for (int col = 0; col < 9; col++) {
+                                    try {
+                                        controlo = new Protocolo();
+                                        controlo = controlo.recebe(in);
+                                    } catch (Exception er) {
+                                        System.err.println(er.getMessage());
+                                    }
+                                    try {
+                                        controlo = new Protocolo();
+                                        controlo.arg1 = String.valueOf(jogoSolucao[line].charAt(col));
+                                        controlo.envia(oos);
+                                    } catch (Exception er) {
+                                        System.err.println(er.getMessage());
+                                    }
+                                }
                             }
                         }
                     } while (true);
