@@ -1,5 +1,7 @@
 import java.io.*;
 import java.net.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 public class Servidor {
     protected final int DIM = 5;
@@ -34,17 +36,17 @@ public class Servidor {
         ObjectInputStream in = null;
 
         Protocolo controlo = new Protocolo();
-        int dicas = 5;
+        int dicasRestantes = 5;
         String[] jogoPuzzle = null;
         String[] jogoSolucao = null;
         String jogo = null;
         InputStream ficheiroJogos = null;
-        int meucliente = -1;
-        String nomecliente;
+        int clientenum = -1;
+        Object clientenome;
 
         public Atendimento(Socket socket) {
             this.soquete = socket;
-            this.meucliente = soquete.getPort();
+            this.clientenum = soquete.getPort();
             try {
                 oos = new ObjectOutputStream(socket.getOutputStream());
                 in = new ObjectInputStream(socket.getInputStream());
@@ -62,36 +64,35 @@ public class Servidor {
         public void run() {
             while (true) {
                 try {
-                    try{
+                    try {
                         controlo = new Protocolo();
                         controlo = controlo.recebe(in);
-                        nomecliente = (String) controlo.arg1;
+                        clientenome =  controlo.arg1;
                     } catch (Exception er) {
-                        System.err.println(er.getMessage());
+                        //System.err.println(er.getMessage());
                     }
-                    System.out.println(nomecliente+"no cliente"+meucliente);
+                    System.out.println(clientenome);
+                    if ( clientenome == null || ((String) clientenome).length() < 1){
+                        clientenome = "Visitante";
+                        System.out.println(clientenome);
+                    }
+                    System.out.println("Cliente "+clientenum+" com jogador "+clientenome);
 
                     try {
                         controlo = new Protocolo();
-                        controlo.arg1 = meucliente;
+                        controlo.arg1 = clientenum;
+                        controlo.arg2 = jogoPuzzle;
                         controlo.envia(oos);
+                        System.out.println("Cliente "+ clientenum +" com jogo atribuido");
+                        //obter.imprimirSolucao(jogo);
+                        ////new Sudoku(jogoSolucao, clientenum);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
 
                     // Get current time
-                    long start = System.currentTimeMillis();
+                    long startTime = System.currentTimeMillis();
 
-                    try{
-                        controlo = new Protocolo();
-                        controlo.arg1 = jogoPuzzle;
-                        controlo.envia(oos);
-                        System.out.println("Cliente "+meucliente+" com jogo atribuido. Solução:");
-                        //obter.imprimirSolucao(jogo);
-                        new Sudoku(jogoSolucao, meucliente);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
 
                     do {
                         try {
@@ -99,15 +100,13 @@ public class Servidor {
                             controlo = controlo.recebe(in);
                         } catch (Exception e) {
                             //e.printStackTrace();
-                            System.out.println("Cliente "+meucliente+" closed");
+                            System.out.println("Cliente "+ clientenum +" closed");
                             try {
                                 oos.close();
                                 in.close();
                                 soquete.close();
                                 join();
-                            } catch (IOException e1) {
-                                e1.printStackTrace();
-                            } catch (InterruptedException e1) {
+                            } catch (IOException | InterruptedException e1) {
                                 e1.printStackTrace();
                             }
                         }
@@ -121,12 +120,12 @@ public class Servidor {
                                     } catch (Exception er) {
                                         System.err.println(er.getMessage());
                                     }
-                                    String valores = (String) controlo.arg1;
+                                    String celulaAVerificar = (String) controlo.arg1;
 
-                                    if (valores.equals(String.valueOf(jogoSolucao[line].charAt(col)))) {
+                                    if (celulaAVerificar.equals(String.valueOf(jogoSolucao[line].charAt(col)))) {
                                         try {
                                             controlo = new Protocolo();
-                                            controlo.arg1 = 2;
+                                            controlo.arg1 = "certo";
                                             controlo.envia(oos);
                                         } catch (Exception er) {
                                             System.err.println(er.getMessage());
@@ -134,7 +133,7 @@ public class Servidor {
                                     } else {
                                         try {
                                             controlo = new Protocolo();
-                                            controlo.arg1 = null;
+                                            controlo.arg1 = "errado";
                                             controlo.envia(oos);
                                         } catch (Exception er) {
                                             System.err.println(er.getMessage());
@@ -143,25 +142,12 @@ public class Servidor {
                                 }
                             }
                             // Get elapsed time in milliseconds
-                            long elapsedTimeMillis = System.currentTimeMillis() - start;
-
-                            // Get elapsed time in seconds
-                            float elapsedTimeSec = elapsedTimeMillis / 1000F;
-
-                            // Get elapsed time in minutes
-                            float elapsedTimeMin = elapsedTimeMillis / (60 * 1000F);
-                            int presentSec = (int) elapsedTimeSec;
-                            while (presentSec >= 60) {
-                                presentSec = presentSec - 60;
-                            }
-                            if (presentSec < 10) {
-                                System.out.println("Cliente " + meucliente + " verificou aos: " + (int) elapsedTimeMin + ":0" + (int) presentSec);
-                            } else {
-                                System.out.println("Cliente " + meucliente + " verificou aos: " + (int) elapsedTimeMin + ":" + (int) presentSec);
-                            }
+                            long elapsedTimeMillis = System.currentTimeMillis() - startTime;
+                            DateFormat dateFormat = new SimpleDateFormat("mm:ss");
+                            System.out.println("Cliente " + clientenum + " verificou aos: "+dateFormat.format(elapsedTimeMillis));
                         }
                         if (botaotipo.equals("Dica")) {
-                            System.out.println("Cliente " + meucliente + " recebeu a dica " + (5 - dicas));
+                            System.out.println("Cliente " + clientenum + " pediu a dica " + (5 - dicasRestantes));
                             try {
                                 controlo = new Protocolo();
                                 controlo = controlo.recebe(in);
@@ -170,13 +156,13 @@ public class Servidor {
                             }
                             int r = (int) controlo.arg1;
 
-                            String celuladica = String.valueOf(jogoSolucao[r / 9].charAt(r % 9));
-                            start = start - 5000;
-                            dicas--;
+                            String dicaSolucao = String.valueOf(jogoSolucao[r / 9].charAt(r % 9));
+                            startTime = startTime - 5000; // acrescenta 5s
+                            dicasRestantes--;
                             try {
                                 controlo = new Protocolo();
-                                controlo.arg1 = celuladica;
-                                controlo.arg2 = dicas;
+                                controlo.arg1 = dicaSolucao;
+                                controlo.arg2 = dicasRestantes;
                                 controlo.envia(oos);
                             } catch (Exception er) {
                                 System.err.println(er.getMessage());
