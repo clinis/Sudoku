@@ -33,11 +33,26 @@ public class Servidor {
         ObjectOutputStream oos = null;
         ObjectInputStream in = null;
 
+        Protocolo controlo = new Protocolo();
+        int dicas = 5;
+        String[] jogoPuzzle = null;
+        String[] jogoSolucao = null;
+        String jogo = null;
+        InputStream ficheiroJogos = null;
+        int meucliente = -1;
+        String nomecliente;
+
         public Atendimento(Socket socket) {
             this.soquete = socket;
+            this.meucliente = soquete.getPort();
             try {
                 oos = new ObjectOutputStream(socket.getOutputStream());
                 in = new ObjectInputStream(socket.getInputStream());
+                ficheiroJogos = new FileInputStream("./res/btest.csv");
+                obterJogo obter = new obterJogo();
+                jogo = obter.readLine(ficheiroJogos, obter.escolherJogoIndexAleatoriamente());
+                jogoPuzzle = obter.deLinhaPara9x9(obter.PuzzleOUSolucao(0, jogo));
+                jogoSolucao = obter.deLinhaPara9x9(obter.PuzzleOUSolucao(1, jogo));
             } catch (IOException e) {
                 System.out.println(e.getMessage());
             }
@@ -47,21 +62,18 @@ public class Servidor {
         public void run() {
             while (true) {
                 try {
-                    Protocolo controlo = new Protocolo();
-                    int dicas = 5;
-                    final String[] jogoPuzzle;
-                    final String[] jogoSolucao;
-                    String jogo = null;
-                    InputStream ficheiroJogos = null;
-                    try {
-                        ficheiroJogos = new FileInputStream("./res/btest.csv");
+                    try{
+                        controlo = new Protocolo();
+                        controlo = controlo.recebe(in);
+                        nomecliente = (String) controlo.arg1;
                     } catch (Exception er) {
                         System.err.println(er.getMessage());
                     }
-                    obterJogo obter = new obterJogo();
+                    System.out.println(nomecliente+"no cliente"+meucliente);
+
                     try {
                         controlo = new Protocolo();
-                        controlo.arg1 = soquete.getPort();
+                        controlo.arg1 = meucliente;
                         controlo.envia(oos);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -70,18 +82,13 @@ public class Servidor {
                     // Get current time
                     long start = System.currentTimeMillis();
 
-                    try {
-                        jogo = obter.readLine(ficheiroJogos, obter.escolherJogoIndexAleatoriamente());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    jogoPuzzle = obter.deLinhaPara9x9(obter.PuzzleOUSolucao(0, jogo));
-                    jogoSolucao = obter.deLinhaPara9x9(obter.PuzzleOUSolucao(1, jogo));
-
                     try{
                         controlo = new Protocolo();
                         controlo.arg1 = jogoPuzzle;
                         controlo.envia(oos);
+                        System.out.println("Cliente "+meucliente+" com jogo atribuido. Solução:");
+                        //obter.imprimirSolucao(jogo);
+                        new Sudoku(jogoSolucao, meucliente);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -92,7 +99,7 @@ public class Servidor {
                             controlo = controlo.recebe(in);
                         } catch (Exception e) {
                             //e.printStackTrace();
-                            System.out.println("Cliente "+soquete.getPort()+" closed");
+                            System.out.println("Cliente "+meucliente+" closed");
                             try {
                                 oos.close();
                                 in.close();
@@ -148,13 +155,13 @@ public class Servidor {
                                 presentSec = presentSec - 60;
                             }
                             if (presentSec < 10) {
-                                System.out.println("Cliente " + soquete.getPort() + " verificou aos: " + (int) elapsedTimeMin + ":0" + (int) presentSec);
+                                System.out.println("Cliente " + meucliente + " verificou aos: " + (int) elapsedTimeMin + ":0" + (int) presentSec);
                             } else {
-                                System.out.println("Cliente " + soquete.getPort() + " verificou aos: " + (int) elapsedTimeMin + ":" + (int) presentSec);
+                                System.out.println("Cliente " + meucliente + " verificou aos: " + (int) elapsedTimeMin + ":" + (int) presentSec);
                             }
                         }
                         if (botaotipo.equals("Dica")) {
-                            System.out.println("Cliente " + soquete.getPort() + " recebeu a dica " + (5 - dicas));
+                            System.out.println("Cliente " + meucliente + " recebeu a dica " + (5 - dicas));
                             try {
                                 controlo = new Protocolo();
                                 controlo = controlo.recebe(in);

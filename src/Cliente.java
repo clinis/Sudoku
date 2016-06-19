@@ -13,12 +13,11 @@ import java.awt.event.*;
 
 public class Cliente extends JApplet {
 
-    Protocolo game = new Protocolo();
+    Protocolo controlo = new Protocolo();
     private ObjectInputStream in;
     private ObjectOutputStream out;
 
-    int meuclient = 0,
-        meujogo = 0;
+    int soucliente = 0;
 
     Sudoku novaJanela;
     Thread one = new Thread();
@@ -40,23 +39,32 @@ public class Cliente extends JApplet {
         } catch (Exception er) {
             System.err.println(er.getMessage());
         }
-        JOptionPane.showInputDialog("Insere o teu nome palhaço");
-        try{
-            game = new Protocolo();
-            game = game.recebe(in);
-            meuclient = (int) game.arg1;
-        } catch (Exception er) {
-            System.err.println(er.getMessage());
-        }
-        System.out.println("Sou o cliente "+meuclient);
+        String nome = JOptionPane.showInputDialog("Insira o seu nome");
 
         try{
-            game = new Protocolo();
-            game = game.recebe(in);
+            controlo = new Protocolo();
+            controlo.arg1 = nome;
+            controlo.envia(out);
         } catch (Exception er) {
             System.err.println(er.getMessage());
         }
-        jogoPuzzle = (String []) game.arg1;
+
+        try{
+            controlo = new Protocolo();
+            controlo = controlo.recebe(in);
+            soucliente = (int) controlo.arg1;
+        } catch (Exception er) {
+            System.err.println(er.getMessage());
+        }
+        System.out.println("Sou o cliente "+ soucliente);
+
+        try{
+            controlo = new Protocolo();
+            controlo = controlo.recebe(in);
+        } catch (Exception er) {
+            System.err.println(er.getMessage());
+        }
+        jogoPuzzle = (String []) controlo.arg1;
 
         one = new Thread(){
             public void run() {
@@ -70,30 +78,30 @@ public class Cliente extends JApplet {
                 novaJanela.bVerificar.addMouseListener(new MouseAdapter() {
                     public void mouseClicked(MouseEvent e) {
                         try{
-                            game = new Protocolo();
-                            game.arg1 = (String) "Verifica";
-                            game.envia(out);
+                            controlo = new Protocolo();
+                            controlo.arg1 = (String) "Verifica";
+                            controlo.envia(out);
                         } catch (Exception er) {
                             System.err.println(er.getMessage());
                         }
                         for (int line = 0; line < 9; line++) {
                             for (int col = 0; col < 9; col++) {
                                 try{
-                                    game = new Protocolo();
-                                    game.arg1 = (String) novaJanela.cels.get(col+line*9).qt.getText();
-                                    game.envia(out);
+                                    controlo = new Protocolo();
+                                    controlo.arg1 = (String) novaJanela.cels.get(col+line*9).qt.getText();
+                                    controlo.envia(out);
                                 } catch (Exception er) {
                                     System.err.println(er.getMessage());
                                 }
 
                                 try{
-                                    game = new Protocolo();
-                                    game = game.recebe(in);
+                                    controlo = new Protocolo();
+                                    controlo = controlo.recebe(in);
                                 } catch (Exception er) {
                                     System.err.println(er.getMessage());
                                 }
 
-                                if(game.arg1 != null)
+                                if(controlo.arg1 != null)
                                     novaJanela.certos++;
                                 else
                                     novaJanela.cels.get(col+line*9).qt.setBackground(Color.RED);
@@ -116,9 +124,9 @@ public class Cliente extends JApplet {
                     public void mouseClicked(MouseEvent e) {
                         if (novaJanela.dicasRestantes > 0) {
                             try{
-                                game = new Protocolo();
-                                game.arg1 = (String) "Dica";
-                                game.envia(out);
+                                controlo = new Protocolo();
+                                controlo.arg1 = (String) "Dica";
+                                controlo.envia(out);
                             } catch (Exception er) {
                                 System.err.println(er.getMessage());
                             }
@@ -128,23 +136,23 @@ public class Cliente extends JApplet {
                                 r = (int)(Math.random() * 80);
                             } while (novaJanela.cels.get(r).editavel == false);
                             try{
-                                game = new Protocolo();
-                                game.arg1 = (int) r;
-                                game.envia(out);
+                                controlo = new Protocolo();
+                                controlo.arg1 = (int) r;
+                                controlo.envia(out);
                             } catch (Exception er) {
                                 System.err.println(er.getMessage());
                             }
 
                             try{
-                                game = new Protocolo();
-                                game = game.recebe(in);
+                                controlo = new Protocolo();
+                                controlo = controlo.recebe(in);
                             } catch (Exception er) {
                                 System.err.println(er.getMessage());
                             }
-                            novaJanela.cels.get(r).qt.setText((String) game.arg1);
+                            novaJanela.cels.get(r).qt.setText((String) controlo.arg1);
                             novaJanela.cels.get(r).qt.setBackground(Color.WHITE);
 
-                            novaJanela.dicasRestantes = (int) game.arg2;
+                            novaJanela.dicasRestantes = (int) controlo.arg2;
                             novaJanela.bDica.setText("Dica ("+novaJanela.dicasRestantes+")");
                         }
                         if (novaJanela.dicasRestantes == 0) {
@@ -197,8 +205,8 @@ public class Cliente extends JApplet {
                     }
                 } while(novaJanela.certos != 81);
                        /*      try{
-                                game.arg1=novaJanela.certos;
-                                game.envia(out);
+                                controlo.arg1=novaJanela.certos;
+                                controlo.envia(out);
                             } catch (Exception er) {
                               System.err.println(er.getMessage());
                             }
