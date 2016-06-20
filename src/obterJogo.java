@@ -4,6 +4,7 @@
  * Sistemas e Aplicações Distribuídas em Telecomunicações
  * 2015/2016
  */
+
 import java.io.*;
 import java.util.ArrayList;
 
@@ -15,7 +16,8 @@ class obterJogo {
 
     /**
      * Lê os jogos que estão no ficheiro file
-     * @param file ficheiro .csv com as informações (Puzzle e Solução) de vários jogos
+     *
+     * @param file      ficheiro .csv com as informações (Puzzle e Solução) de vários jogos
      * @param indexJogo jogo escolhido
      * @return String com a linha (Puzzle e Solução) do jogo escolhido
      * @throws IOException
@@ -33,8 +35,9 @@ class obterJogo {
 
     /**
      * Retorna em String o Puzzle ou a Solução do jogo referido
+     *
      * @param queCoisa 0 para Puzzle, 1 para Solução
-     * @param jogo jogo referido
+     * @param jogo     jogo referido
      * @return String com o Puzzle ou a Solução em linha
      */
     public String PuzzleOUSolucao(int queCoisa, String jogo) {
@@ -44,6 +47,7 @@ class obterJogo {
 
     /**
      * Converte Puzzle/Solução de uma linha para 9x9
+     *
      * @param linha linha com o Puzzle ou com a Solução
      * @return Array 9x9
      */
@@ -56,6 +60,7 @@ class obterJogo {
 
     /**
      * Imprime na consola a solução do jogo referido
+     *
      * @param jogo jogo referido
      */
     public void imprimirSolucao(String jogo) {
@@ -68,12 +73,13 @@ class obterJogo {
     /**
      * Escolhe aleatoriamente um número entre 0 e um máximo.
      * Imprime na consola a informação do número.
+     *
      * @return número aleatório
      */
     public static int escolherJogoIndexAleatoriamente() {
         int lower = 0,
                 upper = 24;
-        int r = (int)(Math.random() * (upper - lower)) + lower;
+        int r = (int) (Math.random() * (upper - lower)) + lower;
         System.out.println("o numero random foi " + r);
         return r;
     }
