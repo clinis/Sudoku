@@ -7,13 +7,18 @@ import java.text.SimpleDateFormat;
 
 public class Servidor {
     protected final int DIM = 5;
-    public static final int dicasIniciais = 5;
-    protected ServerSocket SocketEscuta;
+    static final int dicasIniciais = 5;
+    private ServerSocket SocketEscuta;
 
     public Servidor() {
     }
 
-    public Servidor(int listenPort) {
+    /**
+     * Construtor que cria um ServerSocket que escuta a porta fornecida à espera de ligações.<br>
+     * Quando recebe uma ligação, atende o cliente criando uma Thread para tal.
+     * @param listenPort porta onde o servidor vai estar á escuta
+     */
+    private Servidor(int listenPort) {
         try {
             SocketEscuta = new ServerSocket(listenPort);
             System.out.println("Servidor à espera de ligações...");
@@ -32,8 +37,14 @@ public class Servidor {
         new Servidor(5000);
     }
 
-
-    class Atendimento extends Thread {
+    /**
+     * Thread de atendimento de cada cliente.<br>
+     *  Cria as streams de comunicação com o Cliente.<br>
+     *  Abre o ficheiro com os jogos (Puzzle e Solução) de Sudoku.<br>
+     *  Recebe o nome do Cliente. So o nome for nulo, atribui o nome "Visitante"<br>
+     *  Envia o jogo ao Cliente e fica a guardar pedidos do Cliente
+     */
+    private class Atendimento extends Thread {
         private Socket soquete;
         ObjectOutputStream oos = null;
         ObjectInputStream in = null;
@@ -48,22 +59,21 @@ public class Servidor {
         int clientenum = -1;
         Object clientenome;
         int clientecertos = 0,
-            clientepontos = 0,
             desconto = 0;
-        HighscoreManager hm = new HighscoreManager();
+        HighscoreManager scoreboard = new HighscoreManager();
 
-        public Atendimento(Socket socket) {
+        Atendimento(Socket socket) {
             this.soquete = socket;
             this.clientenum = soquete.getPort();
             try {
                 oos = new ObjectOutputStream(socket.getOutputStream());
                 in = new ObjectInputStream(socket.getInputStream());
-                ficheiroJogos = new FileInputStream("./res/btest.csv");
+                ficheiroJogos = getClass().getResourceAsStream("/"+"btest.csv");
                 obterJogo obter = new obterJogo();
-                jogoindex = obter.escolherJogoIndexAleatoriamente();
-                jogo = obter.readLine(ficheiroJogos, jogoindex);
-                jogoPuzzle = obter.deLinhaPara9x9(obter.PuzzleOUSolucao(0, jogo));
-                jogoSolucao = obter.deLinhaPara9x9(obter.PuzzleOUSolucao(1, jogo));
+                jogoindex = obterJogo.escolherJogoIndexAleatoriamente();
+                jogo = obterJogo.readLine(ficheiroJogos, jogoindex);
+                jogoPuzzle = obterJogo.deLinhaPara9x9(obter.PuzzleOUSolucao(0, jogo));
+                jogoSolucao = obterJogo.deLinhaPara9x9(obter.PuzzleOUSolucao(1, jogo));
                 for (int line = 0; line < 9; line++) {
                     for (int col = 0; col < 9; col++) {
                         if (String.valueOf(jogoPuzzle[line].charAt(col)).equals(String.valueOf(jogoSolucao[line].charAt(col)))) {
@@ -71,7 +81,6 @@ public class Servidor {
                         }
                     }
                 }
-                clientepontos = 0-desconto;
             } catch (IOException e) {
                 System.out.println(e.getMessage());
             }
@@ -88,7 +97,7 @@ public class Servidor {
                     } catch (Exception er) {
                         //System.err.println(er.getMessage());
                     }
-                    //System.out.print("\n\n---\n"+clientenome+"\n---\n\n");
+                    //System.out.print(clientenome);
                     if ( clientenome == null || ((String) clientenome).length() < 1){
                         clientenome = "Visitante";
                     }
@@ -101,7 +110,7 @@ public class Servidor {
                         controlo.envia(oos);
                         System.out.println("Cliente "+ clientenum +" com jogo atribuido");
                         //obter.imprimirSolucao(jogo);
-                        ////new Sudoku(jogoSolucao, clientenum);
+                        //new Sudoku(jogoSolucao, clientenum);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -126,8 +135,10 @@ public class Servidor {
                                 e1.printStackTrace();
                             }
                         }
-                        String botaotipo = (String) controlo.arg1;
-                        if (botaotipo.equals("Verifica")) {
+                        String pedido = (String) controlo.arg1;
+
+                        /** Pedido de verificação de solução por parte do Cliente */
+                        if (pedido.equals("Verifica")) {
                             clientecertos = 0;
                             for (int line = 0; line < 9; line++) {
                                 for (int col = 0; col < 9; col++) {
@@ -141,11 +152,9 @@ public class Servidor {
 
                                     if (celulaAVerificar.equals(String.valueOf(jogoSolucao[line].charAt(col)))) {
                                         clientecertos++;
-                                        clientepontos = (clientecertos-desconto-(dicasIniciais-dicasRestantes)); // pontuacao = certos - os certos do puzzle - as dicas
                                         try {
                                             controlo = new Protocolo();
                                             controlo.arg1 = clientecertos;
-                                            controlo.arg2 = clientepontos;
                                             controlo.envia(oos);
                                         } catch (Exception er) {
                                             System.err.println(er.getMessage());
@@ -168,11 +177,13 @@ public class Servidor {
 
                             if(clientecertos == 81){
                                 System.out.println("Cliente " + clientenum + " GANHOU aos: "+dateFormat.format(elapsedTimeMillis));
-                                hm.addScore((String)clientenome,elapsedTimeMillis,jogoindex);
-                                System.out.print(hm.getHighscoreString());
+                                scoreboard.addScore((String)clientenome,elapsedTimeMillis,jogoindex);
+                                System.out.print(scoreboard.getHighscoreString());
                             }
                         }
-                        if (botaotipo.equals("Dica")) {
+
+                        /** Pedido de dicas por parte do Cliente */
+                        if (pedido.equals("Dica")) {
                             System.out.println("Cliente " + clientenum + " pediu a dica " + (1 + dicasIniciais - dicasRestantes));
                             try {
                                 controlo = new Protocolo();
@@ -194,16 +205,20 @@ public class Servidor {
                                 System.err.println(er.getMessage());
                             }
                         }
-                        if (botaotipo.equals("Highscores")) {
+
+                        /** Pedido de highscores por parte do Cliente */
+                        if (pedido.equals("Highscores")) {
                             try{
                                 controlo = new Protocolo();
-                                controlo.arg1 = hm.getHighscoreString();
+                                controlo.arg1 = scoreboard.getHighscoreString();
                                 controlo.envia(oos);
                             } catch (Exception er) {
                                 System.err.println(er.getMessage());
                             }
                         }
-                        if (botaotipo.equals("Dbug:preencher")) {
+
+                        /** Pedido de debug */
+                        if (pedido.equals("Dbug:preencher")) {
                             for (int line = 0; line < 9; line++) {
                                 for (int col = 0; col < 9; col++) {
                                     try {

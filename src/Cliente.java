@@ -13,26 +13,52 @@ import java.awt.event.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
+/**
+ * <h1>Classe principal do cliente</h1>
+ * <b>Esta é a Classe principal do cliente.</b>
+ * <p>
+ * Esta Classe permite correr o jogo como aplicação Standalone ou como Applet.
+ * <p>
+ * Nesta Classe é criada a janela principal do jogo do cliente, assim como todos os outros elementos necessários.<br>
+ * É criada a grelha principal do jogo, um menu, dois botões (Verificar Solução e Dica) e um indicador (tempo).
+ */
 public class Cliente extends JApplet {
-    private final int dicasIniciais = Servidor.dicasIniciais;
+    /** Classe Protocolo para troca de mensagens entre Cliente e Servidor */
     private Protocolo controlo = new Protocolo();
+    /** Stream de entrada para comunicação com o Servidor */
     private ObjectInputStream in;
+    /** Stream de saída para comunicação com o Servidor */
     private ObjectOutputStream out;
-    Sudoku janelaCliente;
-    Thread tempocliente = new Thread();
+    /** socket de ligação com o Servidor */
     private Socket ligacao;
-    int soucliente = 0;
-    String sounome = null;
+
+    /** janela de jogo do cliente */
+    private Sudoku janelaCliente;
+    /** thread para contador de tempo do lado do Cliente */
+    private Thread tempocliente = new Thread();
+    /** número do Cliente */
+    private int soucliente = 0;
+    /** String com nome do jogador */
+    private String sounome = null;
+    /** Puzzle do jogo escolhido */
     private String[] jogoPuzzle;
-    int r = 0;
+    /** número de dicas inicial */
+    private final int dicasIniciais = Servidor.dicasIniciais;
 
-
+    /**
+     * Main que corre como Standalone ou Applet
+     * @param args endereço e porta do servidor (não implementado)
+     */
     public static void main(String args[]) {
         Cliente app = new Cliente();
         app.init();
     }
 
+    /**
+     *
+     */
     public void init() {
+        /** Ligação ao Servidor na porta 5000 */
         try{
             ligacao = new Socket("localhost", 5000);
             in = new ObjectInputStream(ligacao.getInputStream());
@@ -41,13 +67,15 @@ public class Cliente extends JApplet {
             System.err.println(er.getMessage());
         }
 
+        /** Input Dialog inicial que pergunta ao jogador qual o seu nome */
         sounome = JOptionPane.showInputDialog(this,
                                              "Insira o seu nome para gravar a sua pontuação.\nCaso contrário, ficará registado como \"convidado\".",
                                              "Insira o seu nome",
                                              JOptionPane.QUESTION_MESSAGE);
         if(sounome != null)
             sounome = sounome.trim();
-        try{
+        /** envia ao Servidor o nome do jogador */
+         try{
             controlo = new Protocolo();
             controlo.arg1 = sounome;
             controlo.envia(out);
@@ -55,6 +83,7 @@ public class Cliente extends JApplet {
             System.err.println(er.getMessage());
         }
 
+        /** recebe do Servidor o número do cliente e o Puzzle do jogo de Sudoku */
         try{
             controlo = new Protocolo();
             controlo = controlo.recebe(in);
@@ -67,18 +96,15 @@ public class Cliente extends JApplet {
         try{
             janelaCliente = new Sudoku(jogoPuzzle);
 
-            // Creates a menubar for a JFrame
+            /** gerar o menu */
             JMenuBar menuBar = new JMenuBar();
-            // Add the menubar to the frame
             setJMenuBar(menuBar);
-            // Define and add two drop down menu to the menubar
             JMenu debugMenu = new JMenu("Debug");
             JMenu jogoMenu = new JMenu("Jogo");
             JMenu exitMenu = new JMenu("Sair");
             menuBar.add(debugMenu);
             menuBar.add(jogoMenu);
             menuBar.add(exitMenu);
-            // Create and add simple menu item to one of the drop down menu
             JMenuItem debugPreencherTudo = new JMenuItem("Preencher Tudo");
             JMenuItem jogoHighscores = new JMenuItem("Highscores");
             JMenuItem jogoVerificar = new JMenuItem("Verificar");
@@ -89,6 +115,7 @@ public class Cliente extends JApplet {
             jogoMenu.add(jogoVerificar);
             jogoMenu.add(jogoDicas);
             exitMenu.add(sairSair);
+            /** opcção de Debugging: preenche o jogo com os números certos */
             debugPreencherTudo.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent arg0) {
                     try{
@@ -120,11 +147,13 @@ public class Cliente extends JApplet {
                     }
                 }
             });
+            /** opção de verificar a solução */
             jogoVerificar.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent arg0) {
                     verificar();
                 }
             });
+            /** opção de pedir dicas */
             jogoDicas.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent arg0) {
                     dicas();
@@ -132,9 +161,9 @@ public class Cliente extends JApplet {
                         jogoDicas.setEnabled(false);
                 }
             });
+            /** opção de mostrar uma janela com os Highscores */
             jogoHighscores.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent arg0) {
-                    System.out.println("Testingggg Highscore");
                     try {
                         controlo = new Protocolo();
                         controlo.arg1 = (String) "Highscores";
@@ -159,6 +188,7 @@ public class Cliente extends JApplet {
                     janelaHighScores.setVisible(true);
                 }
             });
+            /** opção de sair do jogo */
             sairSair.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent arg0) {
                     sair();
@@ -166,16 +196,19 @@ public class Cliente extends JApplet {
             });
             janelaCliente.add(menuBar, BorderLayout.NORTH);
 
+            /** botão verificar */
             janelaCliente.bVerificar.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     verificar();
                 }
             });
+            /** botão pedir dicas */
             janelaCliente.bDica.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     dicas();
                 }
             });
+            /** botão de fecho da janela */
             janelaCliente.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent we) {
                     sair();
@@ -188,9 +221,45 @@ public class Cliente extends JApplet {
         System.out.println("Sudokan");
 
         janelaCliente.setVisible(true);
+
+        /** Thread que conta o tempo de jogo do lado do Cliente. Este tempo é meramente informativo. */
+        tempocliente = new Thread(){
+            public void run() {
+                long startTime = System.currentTimeMillis();
+                do{
+                    try{
+                        sleep(1000);
+                    }catch (Exception er) {
+                        System.err.println(er.getMessage());
+                    }
+                    // elapsed time in milliseconds
+                    long elapsedTimeMillis = System.currentTimeMillis() - ( startTime - 5000 *(dicasIniciais-janelaCliente.dicasRestantes) ); // adiciona 5s por dica
+
+                    DateFormat dateFormat = new SimpleDateFormat("mm:ss");
+                    janelaCliente.tempo.setText(dateFormat.format(elapsedTimeMillis));
+                    //System.out.println("T: "+dateFormat.format(elapsedTimeMillis));
+                } while(janelaCliente.certos != 81);
+            }
+        };
+        if(!tempocliente.isAlive()) {
+            tempocliente.start();
+        }
     }
 
-    void verificar(){
+    /**
+     * Indica ao Servidor que o jogador pretende verificar a solução<br>
+     * Percorre cada uma das células e:
+     * <ul>
+     *     <li> envia a célula para o Servidor</li>
+     *     <li>espera resposta do Servidor:
+     *       <ul>
+     *          <li> se respsota negativa, assinala a célula como errada (cor vermelha)</li>
+     *          <li> se resposta positiva, guarda o número de células certas</li>
+     *       </ul></li>
+     * </ul>
+     * Se no final de percorrer todas as células, o número de células certas for igual a 81, o jogador terminou o jogo
+     */
+    private void verificar(){
         try{
             controlo = new Protocolo();
             controlo.arg1 = (String) "Verifica";
@@ -219,7 +288,6 @@ public class Cliente extends JApplet {
                     repaint();
                 } else{
                     janelaCliente.certos = (int)controlo.arg1;
-                    janelaCliente.pontuacao.setText("Pontos: "+controlo.arg2.toString() );
                 }
             }
         }
@@ -230,15 +298,23 @@ public class Cliente extends JApplet {
                 }
             }
             JOptionPane.showMessageDialog(getContentPane(), "Parabéns! Chegaste ao fim do jogo.","Parabéns!", JOptionPane.INFORMATION_MESSAGE);
-            if(true){
-                sair();
-            }
+            sair();
         } else {
             janelaCliente.certos = 0;
         }
     }
 
-    void dicas(){
+    /**
+     * Indica ao Servidor que o jogador pretende receber uma dica<br>
+     * Gera um número aleatório entre 0 e 80 (de forma que calhe numa célula editável) e:
+     * <ul>
+     *    <li> envia essa célula para o Servidor</li>
+     *    <li> espera resposta do Servidor</li>
+     *    <li> preenche essa célula com a resposta do Servidor</li>
+     *    <li> decrementa o número de dicas disponíveis</li>
+     * </ul>
+     */
+    private void dicas(){
         if (janelaCliente.dicasRestantes > 0) {
             try{
                 controlo = new Protocolo();
@@ -275,13 +351,16 @@ public class Cliente extends JApplet {
         }
     }
 
-    void sair(){
+    /**
+     * Fecha a ligação com o Servidor e fecha o cliente
+     */
+    private void sair(){
         try {
             ligacao.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //janelaCliente.dispose();
-        System.exit(1);
+        janelaCliente.dispose();
+        //System.exit(1);
     }
 }

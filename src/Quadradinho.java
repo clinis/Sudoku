@@ -12,13 +12,34 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import javax.swing.*;
 
+/**
+ * <h1>Classe com as características de cada célula</h1>
+ * Cada célula é uma JPanel com um JTextArea não editável pelo utilizador no seu interior.<br>
+ * Cada célula tem uma variável que indica se o número na célula pode ser mudado no decorrer
+ * do jogo (i.e., se é uma célula para o jogador preencher).<br>
+ * Os eventos das células são KeyListeners às teclas pressionadas pelo jogador, nomeadamente, os
+ * números de 0 a 9 para colocação na grelha e algumas letras para certas funções.
+ */
 class Quadradinho extends JPanel {
     /** Varíavel booleana que indica se o número na célula pode ser mudado no decorrer do jogo
      * (i.e., se é uma célula para o utilizador preencher) */
-    public boolean editavel = true;
+    boolean editavel = true;
     /** JTextArea não editável pelo utilizador e que mostra o número da célula */
-    public final JTextArea qt;
+    final JTextArea qt;
 
+    /**
+     * Construtor das células<br>
+     * Define as margens da célula, adiciona um JTextArea, define um estilo para as letras e coloca a célula visivel.
+     * Adiciona Eventos ao JTextField qt.<br>
+     * <ul>
+     *     <li>MouseListener: muda a cor de fundo da célula que o utilizador clicar com o rato para cinzento</li>
+     *     <li>KeyListener: teclas pressionadas pelo utilizador
+     *     <ul>
+     *          <li>1, 2, 3, 4, 5, 6, 7, 8, 9: muda o número da célula para o número pressionado pelo utilizador</li>
+     *          <li>Delete ou Backspace: elimina o número da célula</li>
+     *     </ul></li>
+     * </ul>
+     */
     Quadradinho() {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -29,10 +50,6 @@ class Quadradinho extends JPanel {
         add(qt, BorderLayout.CENTER);
 
         setVisible(true);
-    }
-
-    Quadradinho(int line, int col, ArrayList<Quadradinho> cels){
-        this();
 
         qt.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -67,22 +84,6 @@ class Quadradinho extends JPanel {
                         qt.setBackground(Color.WHITE);
                     }
                 }
-//                if (KeyEvent.getKeyText(e.getKeyCode()).equals("R")) {
-//                    if (editavel == true) {
-//                        qt.setText(String.valueOf(jogo[line].charAt(col)));
-//                        qt.setBackground(Color.WHITE);
-//                    }
-//                }
-//                if (KeyEvent.getKeyText(e.getKeyCode()).equals("H")) {
-//                    if (editavel == true) {
-//                        int r = (int)(Math.random() * 80);
-//                        if (cels.get(r).editavel == true) {
-//                            cels.get(r).qt.setText(String.valueOf(jogo[r/9].charAt(r%9)));
-//                            cels.get(r).qt.setBackground(Color.WHITE);
-//                        }
-//                        qt.setBackground(Color.WHITE);
-//                    }
-//                }
             }
         });
     }

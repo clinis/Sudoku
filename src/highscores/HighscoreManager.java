@@ -6,24 +6,19 @@ import java.util.*;
 import java.io.*;
 
 public class HighscoreManager {
-    // An arraylist of the type "score" we will use to work with the scores inside the class
     private ArrayList<Score> scores;
 
-    // The name of the file where the highscores will be saved
-    private static final String HIGHSCORE_FILE = "./HighScores/scores.dat";
-    private static final String HIGHSCORE_FILE_txt = "./HighScores/scores.txt";
+    private static final String HIGHSCORE_FILE = "./_highscores.dat";
+    private static final String HIGHSCORE_FILE_txt = "./_highscores.txt";
 
-    //Initialising an in and outputStream for working with the file
-    ObjectOutputStream outputStream = null;
-    ObjectInputStream inputStream = null;
+    private ObjectOutputStream outputStream = null;
+    private ObjectInputStream inputStream = null;
 
     public HighscoreManager() {
-        //initialising the scores-arraylist
         scores = new ArrayList<Score>();
     }
 
-    ////////////////////////////////////////////////
-    public ArrayList<Score> getScores() {
+    private ArrayList<Score> getScores() {
         loadScoreFile();
         sort();
         return scores;
@@ -38,16 +33,11 @@ public class HighscoreManager {
         updateScoreFile();
         writeScoreTextFile();
     }
-    public void loadScoreFile() {
+    private void loadScoreFile() {
         try {
             inputStream = new ObjectInputStream(new FileInputStream(HIGHSCORE_FILE));
             scores = (ArrayList<Score>) inputStream.readObject();
-        } catch (FileNotFoundException e) {
-            System.out.println("[Laad] FNF Error: " + e.getMessage());
-        } catch (IOException e) {
-            System.out.println("[Laad] IO Error: " + e.getMessage());
-        } catch (ClassNotFoundException e) {
-            System.out.println("[Laad] CNF Error: " + e.getMessage());
+        } catch (IOException | ClassNotFoundException e) {
         } finally {
             try {
                 if (outputStream != null) {
@@ -55,18 +45,16 @@ public class HighscoreManager {
                     outputStream.close();
                 }
             } catch (IOException e) {
-                System.out.println("[Laad] IO Error: " + e.getMessage());
             }
         }
     }
-    public void updateScoreFile() {
+    private void updateScoreFile() {
         try {
             outputStream = new ObjectOutputStream(new FileOutputStream(HIGHSCORE_FILE));
             outputStream.writeObject(scores);
         } catch (FileNotFoundException e) {
-            System.out.println("[Update] FNF Error: " + e.getMessage() + ",the program will try and make a new file");
+            System.out.println("[Update] " + e.getMessage() + "criar ficheiro novo");
         } catch (IOException e) {
-            System.out.println("[Update] IO Error: " + e.getMessage());
         } finally {
             try {
                 if (outputStream != null) {
@@ -78,15 +66,15 @@ public class HighscoreManager {
             }
         }
     }
-    public void writeScoreTextFile() {
+    private void writeScoreTextFile() {
         try {
             FileWriter pw = new FileWriter(HIGHSCORE_FILE_txt, false);
             pw.write(getHighscoreString());
             pw.close();
         } catch (FileNotFoundException e) {
-            System.out.println("[Update] FNF Error: " + e.getMessage() + ",the program will try and make a new file");
+            System.out.println("[Update]" + e.getMessage() + "criar ficheiro novo");
         } catch (IOException e) {
-            System.out.println("[Update] IO Error: " + e.getMessage());
+            System.out.println("IO Error: " + e.getMessage());
         }
     }
     public String getHighscoreString() {
@@ -102,7 +90,6 @@ public class HighscoreManager {
             x = max;
         }
         while (i < x) {
-            //highscoreString += (i + 1) + ".\t" + scores.get(i).getNome() + "\t\t" + scores.get(i).getTempo() + "\n";
             DateFormat dateFormat = new SimpleDateFormat("mm:ss");
             highscoreString += (i + 1) + ".\t" + dateFormat.format(scores.get(i).getTempo()) + "\t" + scores.get(i).getPuzzle() + "\t" + scores.get(i).getNome() + "\n";
             i++;
