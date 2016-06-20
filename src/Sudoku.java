@@ -4,6 +4,7 @@
  * Sistemas e Aplicações Distribuídas em Telecomunicações
  * 2015/2016
  */
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -36,11 +37,12 @@ class Sudoku extends JFrame implements Serializable{
     int dicasRestantes = dicasIniciais;
 
     JButton bVerificar = new JButton("Verificar resposta"),
-            bDica = new JButton("Dica ("+dicasRestantes+")");
+            bDica = new JButton("Dica (" + dicasRestantes + ")");
     JTextArea tempo = new JTextArea("Tempo");
 
     /**
      * Construtor para board do jogador<br>
+     *
      * @param jogoPuzzle jogo
      * @throws IOException
      */
@@ -65,13 +67,14 @@ class Sudoku extends JFrame implements Serializable{
     /**
      * Construtor para board da solução do cliente<br>
      * <b>Usado só no lado do Servidor</b>
+     *
      * @param jogoSolucao jogo
-     * @param cliente numero do cliente
+     * @param cliente     numero do cliente
      */
     Sudoku(String[] jogoSolucao, int cliente) {
-        JFrame janelaSolucao = new JFrame("Solução do Cliente "+cliente);
+        JFrame janelaSolucao = new JFrame("Solução do Cliente " + cliente);
         janelaSolucao.setSize(450, 450);
-        janelaSolucao.add(desenhaGrelha(new ArrayList<Quadradinho>(),jogoSolucao));
+        janelaSolucao.add(desenhaGrelha(new ArrayList<Quadradinho>(), jogoSolucao));
         janelaSolucao.setVisible(true);
         janelaSolucao.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
@@ -84,6 +87,7 @@ class Sudoku extends JFrame implements Serializable{
      * Método que desenha as grelhas 9x9 do jogo de Sudoku.<br>
      * Cria um JPanel com GridLayout 9x9 e coloca as células em cada lugar.<br>
      * Recebe uma Array com células e coloca o texo conforme o Puzzle ou a Solução do jogo
+     *
      * @return JPanel com as células que depois pode ser colocado na janela Container pretendido
      */
     private JPanel desenhaGrelha(ArrayList<Quadradinho> qe, String[] jogo) {
@@ -92,15 +96,15 @@ class Sudoku extends JFrame implements Serializable{
         for (int line = 0; line < 9; line++) {
             for (int col = 0; col < 9; col++) {
                 qe.add(new Quadradinho());
-                desenhaRegioes(qe.get(col+line*9), line, col);
-                grelha.add(qe.get(col+line*9));
+                desenhaRegioes(qe.get(col + line * 9), line, col);
+                grelha.add(qe.get(col + line * 9));
 
                 if (String.valueOf(jogo[line].charAt(col)).equals(".")) {
-                    qe.get(col+line*9).qt.setText(" ");
+                    qe.get(col + line * 9).qt.setText(" ");
                 } else {
-                    qe.get(col+line*9).qt.setText(String.valueOf(jogo[line].charAt(col)));
-                    qe.get(col+line*9).qt.setBackground(Color.YELLOW);
-                    qe.get(col+line*9).editavel = false;
+                    qe.get(col + line * 9).qt.setText(String.valueOf(jogo[line].charAt(col)));
+                    qe.get(col + line * 9).qt.setBackground(Color.YELLOW);
+                    qe.get(col + line * 9).editavel = false;
                 }
             }
         }
@@ -111,6 +115,7 @@ class Sudoku extends JFrame implements Serializable{
      * Método que desenha as linhas grossas que separam as regiões.<br>
      * Nas linhas 2 e 6 coloca uma linha grossa horizontal.<br>
      * Nas colunas 2 e 6 coloca uma linha grossa vertical.
+     *
      * @param cel
      * @param line
      * @param col

@@ -23,16 +23,19 @@ public class HighscoreManager {
         sort();
         return scores;
     }
+
     private void sort() {
         ScoreComparator comparator = new ScoreComparator();
         Collections.sort(scores, comparator);
     }
+
     public void addScore(String name, long score, int puzzle) {
         loadScoreFile();
         scores.add(new Score(name, score, puzzle));
         updateScoreFile();
         writeScoreTextFile();
     }
+
     private void loadScoreFile() {
         try {
             inputStream = new ObjectInputStream(new FileInputStream(HIGHSCORE_FILE));
@@ -48,6 +51,7 @@ public class HighscoreManager {
             }
         }
     }
+
     private void updateScoreFile() {
         try {
             outputStream = new ObjectOutputStream(new FileOutputStream(HIGHSCORE_FILE));
@@ -66,6 +70,7 @@ public class HighscoreManager {
             }
         }
     }
+
     private void writeScoreTextFile() {
         try {
             FileWriter pw = new FileWriter(HIGHSCORE_FILE_txt, false);
@@ -77,6 +82,7 @@ public class HighscoreManager {
             System.out.println("IO Error: " + e.getMessage());
         }
     }
+
     public String getHighscoreString() {
         String highscoreString = "";
         int max = 10;

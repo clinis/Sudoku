@@ -4,6 +4,7 @@
  * Sistemas e Aplicações Distribuídas em Telecomunicações
  * 2015/2016
  */
+
 import javax.swing.*;
 import java.io.IOException;
 import java.io.*;
@@ -47,6 +48,7 @@ public class Cliente extends JApplet {
 
     /**
      * Main que corre como Standalone ou Applet
+     *
      * @param args endereço e porta do servidor (não implementado)
      */
     public static void main(String args[]) {
@@ -59,7 +61,7 @@ public class Cliente extends JApplet {
      */
     public void init() {
         /** Ligação ao Servidor na porta 5000 */
-        try{
+        try {
             ligacao = new Socket("localhost", 5000);
             in = new ObjectInputStream(ligacao.getInputStream());
             out = new ObjectOutputStream(ligacao.getOutputStream());
@@ -69,13 +71,13 @@ public class Cliente extends JApplet {
 
         /** Input Dialog inicial que pergunta ao jogador qual o seu nome */
         sounome = JOptionPane.showInputDialog(this,
-                                             "Insira o seu nome para gravar a sua pontuação.\nCaso contrário, ficará registado como \"convidado\".",
-                                             "Insira o seu nome",
-                                             JOptionPane.QUESTION_MESSAGE);
-        if(sounome != null)
+                "Insira o seu nome para gravar a sua pontuação.\nCaso contrário, ficará registado como \"convidado\".",
+                "Insira o seu nome",
+                JOptionPane.QUESTION_MESSAGE);
+        if (sounome != null)
             sounome = sounome.trim();
         /** envia ao Servidor o nome do jogador */
-         try{
+        try {
             controlo = new Protocolo();
             controlo.arg1 = sounome;
             controlo.envia(out);
@@ -84,16 +86,16 @@ public class Cliente extends JApplet {
         }
 
         /** recebe do Servidor o número do cliente e o Puzzle do jogo de Sudoku */
-        try{
+        try {
             controlo = new Protocolo();
             controlo = controlo.recebe(in);
             soucliente = (int) controlo.arg1;
-            jogoPuzzle = (String []) controlo.arg2;
+            jogoPuzzle = (String[]) controlo.arg2;
         } catch (Exception er) {
             System.err.println(er.getMessage());
         }
-        System.out.println("Sou o cliente "+ soucliente);
-        try{
+        System.out.println("Sou o cliente " + soucliente);
+        try {
             janelaCliente = new Sudoku(jogoPuzzle);
 
             /** gerar o menu */
@@ -118,7 +120,7 @@ public class Cliente extends JApplet {
             /** opcção de Debugging: preenche o jogo com os números certos */
             debugPreencherTudo.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent arg0) {
-                    try{
+                    try {
                         controlo = new Protocolo();
                         controlo.arg1 = (String) "Dbug:preencher";
                         controlo.envia(out);
@@ -127,7 +129,7 @@ public class Cliente extends JApplet {
                     }
                     for (int line = 0; line < 9; line++) {
                         for (int col = 0; col < 9; col++) {
-                            try{
+                            try {
                                 controlo = new Protocolo();
                                 controlo.arg1 = (String) janelaCliente.cels.get(col + line * 9).qt.getText();
                                 controlo.envia(out);
@@ -223,25 +225,25 @@ public class Cliente extends JApplet {
         janelaCliente.setVisible(true);
 
         /** Thread que conta o tempo de jogo do lado do Cliente. Este tempo é meramente informativo. */
-        tempocliente = new Thread(){
+        tempocliente = new Thread() {
             public void run() {
                 long startTime = System.currentTimeMillis();
-                do{
-                    try{
+                do {
+                    try {
                         sleep(1000);
-                    }catch (Exception er) {
+                    } catch (Exception er) {
                         System.err.println(er.getMessage());
                     }
                     // elapsed time in milliseconds
-                    long elapsedTimeMillis = System.currentTimeMillis() - ( startTime - 5000 *(dicasIniciais-janelaCliente.dicasRestantes) ); // adiciona 5s por dica
+                    long elapsedTimeMillis = System.currentTimeMillis() - (startTime - 5000 * (dicasIniciais - janelaCliente.dicasRestantes)); // adiciona 5s por dica
 
                     DateFormat dateFormat = new SimpleDateFormat("mm:ss");
                     janelaCliente.tempo.setText(dateFormat.format(elapsedTimeMillis));
                     //System.out.println("T: "+dateFormat.format(elapsedTimeMillis));
-                } while(janelaCliente.certos != 81);
+                } while (janelaCliente.certos != 81);
             }
         };
-        if(!tempocliente.isAlive()) {
+        if (!tempocliente.isAlive()) {
             tempocliente.start();
         }
     }
@@ -259,8 +261,8 @@ public class Cliente extends JApplet {
      * </ul>
      * Se no final de percorrer todas as células, o número de células certas for igual a 81, o jogador terminou o jogo
      */
-    private void verificar(){
-        try{
+    private void verificar() {
+        try {
             controlo = new Protocolo();
             controlo.arg1 = (String) "Verifica";
             controlo.envia(out);
@@ -269,35 +271,35 @@ public class Cliente extends JApplet {
         }
         for (int line = 0; line < 9; line++) {
             for (int col = 0; col < 9; col++) {
-                try{
+                try {
                     controlo = new Protocolo();
-                    controlo.arg1 = (String) janelaCliente.cels.get(col+line*9).qt.getText();
+                    controlo.arg1 = (String) janelaCliente.cels.get(col + line * 9).qt.getText();
                     controlo.envia(out);
                 } catch (Exception er) {
                     System.err.println(er.getMessage());
                 }
 
-                try{
+                try {
                     controlo = new Protocolo();
                     controlo = controlo.recebe(in);
                 } catch (Exception er) {
                     System.err.println(er.getMessage());
                 }
-                if( (int)controlo.arg1 == -1) {
+                if ((int) controlo.arg1 == -1) {
                     janelaCliente.cels.get(col + line * 9).qt.setBackground(Color.RED);
                     repaint();
-                } else{
-                    janelaCliente.certos = (int)controlo.arg1;
+                } else {
+                    janelaCliente.certos = (int) controlo.arg1;
                 }
             }
         }
         if (janelaCliente.certos == 81) {
             for (int line = 0; line < 9; line++) {
                 for (int col = 0; col < 9; col++) {
-                    janelaCliente.cels.get(col+line*9).qt.setBackground(Color.GREEN);
+                    janelaCliente.cels.get(col + line * 9).qt.setBackground(Color.GREEN);
                 }
             }
-            JOptionPane.showMessageDialog(getContentPane(), "Parabéns! Chegaste ao fim do jogo.","Parabéns!", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(getContentPane(), "Parabéns! Chegaste ao fim do jogo.", "Parabéns!", JOptionPane.INFORMATION_MESSAGE);
             sair();
         } else {
             janelaCliente.certos = 0;
@@ -314,9 +316,9 @@ public class Cliente extends JApplet {
      *    <li> decrementa o número de dicas disponíveis</li>
      * </ul>
      */
-    private void dicas(){
+    private void dicas() {
         if (janelaCliente.dicasRestantes > 0) {
-            try{
+            try {
                 controlo = new Protocolo();
                 controlo.arg1 = (String) "Dica";
                 controlo.envia(out);
@@ -325,16 +327,16 @@ public class Cliente extends JApplet {
             }
             int r;
             do {
-                r = (int)(Math.random() * 80);
+                r = (int) (Math.random() * 80);
             } while (janelaCliente.cels.get(r).editavel == false);
-            try{
+            try {
                 controlo = new Protocolo();
                 controlo.arg1 = (int) r;
                 controlo.envia(out);
             } catch (Exception er) {
                 System.err.println(er.getMessage());
             }
-            try{
+            try {
                 controlo = new Protocolo();
                 controlo = controlo.recebe(in);
             } catch (Exception er) {
@@ -344,7 +346,7 @@ public class Cliente extends JApplet {
             janelaCliente.cels.get(r).qt.setBackground(Color.WHITE);
 
             janelaCliente.dicasRestantes = (int) controlo.arg2;
-            janelaCliente.bDica.setText("Dica ("+ janelaCliente.dicasRestantes+")");
+            janelaCliente.bDica.setText("Dica (" + janelaCliente.dicasRestantes + ")");
         }
         if (janelaCliente.dicasRestantes == 0) {
             janelaCliente.bDica.setEnabled(false);
@@ -354,7 +356,7 @@ public class Cliente extends JApplet {
     /**
      * Fecha a ligação com o Servidor e fecha o cliente
      */
-    private void sair(){
+    private void sair() {
         try {
             ligacao.close();
         } catch (IOException e) {

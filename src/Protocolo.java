@@ -9,7 +9,8 @@ class Protocolo implements Serializable {
         out.flush();
         out.reset();
     }
+
     static Protocolo recebe(ObjectInputStream in) throws Exception {
-        return (Protocolo)in.readObject();
+        return (Protocolo) in.readObject();
     }
 }

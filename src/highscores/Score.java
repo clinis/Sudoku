@@ -2,7 +2,7 @@ package highscores;
 
 import java.io.Serializable;
 
-public class Score  implements Serializable {
+public class Score implements Serializable {
     private long tempo;
     private String nome;
     private int puzzle;
@@ -15,7 +15,7 @@ public class Score  implements Serializable {
         return tempo;
     }
 
-    public int getPuzzle(){
+    public int getPuzzle() {
         return puzzle;
     }
 

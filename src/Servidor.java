@@ -16,6 +16,7 @@ public class Servidor {
     /**
      * Construtor que cria um ServerSocket que escuta a porta fornecida à espera de ligações.<br>
      * Quando recebe uma ligação, atende o cliente criando uma Thread para tal.
+     *
      * @param listenPort porta onde o servidor vai estar á escuta
      */
     private Servidor(int listenPort) {
@@ -24,7 +25,7 @@ public class Servidor {
             System.out.println("Servidor à espera de ligações...");
             while (true) {
                 Socket socket = SocketEscuta.accept();
-                System.out.println("Ligado: "+socket.getPort());
+                System.out.println("Ligado: " + socket.getPort());
                 Atendimento atendedor = new Atendimento(socket);
                 atendedor.start();
             }
@@ -39,10 +40,10 @@ public class Servidor {
 
     /**
      * Thread de atendimento de cada cliente.<br>
-     *  Cria as streams de comunicação com o Cliente.<br>
-     *  Abre o ficheiro com os jogos (Puzzle e Solução) de Sudoku.<br>
-     *  Recebe o nome do Cliente. So o nome for nulo, atribui o nome "Visitante"<br>
-     *  Envia o jogo ao Cliente e fica a guardar pedidos do Cliente
+     * Cria as streams de comunicação com o Cliente.<br>
+     * Abre o ficheiro com os jogos (Puzzle e Solução) de Sudoku.<br>
+     * Recebe o nome do Cliente. So o nome for nulo, atribui o nome "Visitante"<br>
+     * Envia o jogo ao Cliente e fica a guardar pedidos do Cliente
      */
     private class Atendimento extends Thread {
         private Socket soquete;
@@ -59,7 +60,7 @@ public class Servidor {
         int clientenum = -1;
         Object clientenome;
         int clientecertos = 0,
-            desconto = 0;
+                desconto = 0;
         HighscoreManager scoreboard = new HighscoreManager();
 
         Atendimento(Socket socket) {
@@ -68,7 +69,7 @@ public class Servidor {
             try {
                 oos = new ObjectOutputStream(socket.getOutputStream());
                 in = new ObjectInputStream(socket.getInputStream());
-                ficheiroJogos = getClass().getResourceAsStream("/"+"btest.csv");
+                ficheiroJogos = getClass().getResourceAsStream("/" + "btest.csv");
                 obterJogo obter = new obterJogo();
                 jogoindex = obterJogo.escolherJogoIndexAleatoriamente();
                 jogo = obterJogo.readLine(ficheiroJogos, jogoindex);
@@ -93,22 +94,22 @@ public class Servidor {
                     try {
                         controlo = new Protocolo();
                         controlo = controlo.recebe(in);
-                        clientenome =  (String) controlo.arg1;
+                        clientenome = (String) controlo.arg1;
                     } catch (Exception er) {
                         //System.err.println(er.getMessage());
                     }
                     //System.out.print(clientenome);
-                    if ( clientenome == null || ((String) clientenome).length() < 1){
+                    if (clientenome == null || ((String) clientenome).length() < 1) {
                         clientenome = "Visitante";
                     }
-                    System.out.println("Cliente "+clientenum+" com jogador "+clientenome);
+                    System.out.println("Cliente " + clientenum + " com jogador " + clientenome);
 
                     try {
                         controlo = new Protocolo();
                         controlo.arg1 = clientenum;
                         controlo.arg2 = jogoPuzzle;
                         controlo.envia(oos);
-                        System.out.println("Cliente "+ clientenum +" com jogo atribuido");
+                        System.out.println("Cliente " + clientenum + " com jogo atribuido");
                         //obter.imprimirSolucao(jogo);
                         //new Sudoku(jogoSolucao, clientenum);
                     } catch (Exception e) {
@@ -125,7 +126,7 @@ public class Servidor {
                             controlo = controlo.recebe(in);
                         } catch (Exception e) {
                             //e.printStackTrace();
-                            System.out.println("Cliente "+ clientenum +" closed");
+                            System.out.println("Cliente " + clientenum + " closed");
                             try {
                                 oos.close();
                                 in.close();
@@ -173,11 +174,11 @@ public class Servidor {
                             // Get elapsed time in milliseconds
                             long elapsedTimeMillis = System.currentTimeMillis() - startTime;
                             DateFormat dateFormat = new SimpleDateFormat("mm:ss");
-                            System.out.println("Cliente " + clientenum + " verificou aos: "+dateFormat.format(elapsedTimeMillis));
+                            System.out.println("Cliente " + clientenum + " verificou aos: " + dateFormat.format(elapsedTimeMillis));
 
-                            if(clientecertos == 81){
-                                System.out.println("Cliente " + clientenum + " GANHOU aos: "+dateFormat.format(elapsedTimeMillis));
-                                scoreboard.addScore((String)clientenome,elapsedTimeMillis,jogoindex);
+                            if (clientecertos == 81) {
+                                System.out.println("Cliente " + clientenum + " GANHOU aos: " + dateFormat.format(elapsedTimeMillis));
+                                scoreboard.addScore((String) clientenome, elapsedTimeMillis, jogoindex);
                                 System.out.print(scoreboard.getHighscoreString());
                             }
                         }
@@ -208,7 +209,7 @@ public class Servidor {
 
                         /** Pedido de highscores por parte do Cliente */
                         if (pedido.equals("Highscores")) {
-                            try{
+                            try {
                                 controlo = new Protocolo();
                                 controlo.arg1 = scoreboard.getHighscoreString();
                                 controlo.envia(oos);

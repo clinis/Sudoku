@@ -4,6 +4,7 @@
  * Sistemas e Aplicações Distribuídas em Telecomunicações
  * 2015/2016
  */
+
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -63,22 +64,22 @@ class Quadradinho extends JPanel {
                 String tecla = KeyEvent.getKeyText(e.getKeyChar()); // getKeyChar porque também permite apanhar os números do keyPad
                 //System.out.println(tecla);
                 if (tecla.equals("1") ||
-                    tecla.equals("2") ||
-                    tecla.equals("3") ||
-                    tecla.equals("4") ||
-                    tecla.equals("5") ||
-                    tecla.equals("6") ||
-                    tecla.equals("7") ||
-                    tecla.equals("8") ||
-                    tecla.equals("9")) {
+                        tecla.equals("2") ||
+                        tecla.equals("3") ||
+                        tecla.equals("4") ||
+                        tecla.equals("5") ||
+                        tecla.equals("6") ||
+                        tecla.equals("7") ||
+                        tecla.equals("8") ||
+                        tecla.equals("9")) {
                     if (editavel == true) {
                         qt.setText(tecla);
                         qt.setBackground(Color.WHITE);
                     }
                 }
-                if (tecla.equals("Delete")      ||
-                    tecla.equals("Backspace")   ||
-                    tecla.equals("⌫")) {
+                if (tecla.equals("Delete") ||
+                        tecla.equals("Backspace") ||
+                        tecla.equals("⌫")) {
                     if (editavel == true) {
                         qt.setText(" ");
                         qt.setBackground(Color.WHITE);
